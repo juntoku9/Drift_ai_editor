@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { SignedIn, UserButton, useUser } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/nextjs";
 
 import { AnalysisView } from "@/components/analysis-view";
 import { DocumentList } from "@/components/document-list";
@@ -300,26 +300,30 @@ export default function HomePage() {
     });
   }
 
-  if (!isLoaded) {
-    return (
-      <main className="mx-auto max-w-[1600px] px-4 py-6 md:px-8 md:py-10">
-        <p className="text-sm text-ink/70">Loading user...</p>
-      </main>
-    );
-  }
 
   // Library view
   if (activeDocId === null) {
     return (
       <main className="mx-auto max-w-[1600px] px-4 py-6 md:px-8 md:py-10">
-        <header className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate/75">Drift Studio</p>
-            <h1 className="font-[var(--font-serif)] text-4xl leading-none md:text-5xl">Drift</h1>
+            <h1 className="font-[var(--font-serif)] text-5xl leading-none md:text-6xl">Drift</h1>
+            <p className="mt-2 max-w-md text-base text-ink/60">
+              Track how meaning, intent, and commitments change across every version of your document.
+            </p>
           </div>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
+          <div className="flex items-center gap-2 pt-1">
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+            <SignedOut>
+              <SignInButton mode="modal">
+                <button className="rounded-full border border-ink/20 bg-white px-4 py-2 text-sm font-semibold hover:bg-ink/5">
+                  Sign in
+                </button>
+              </SignInButton>
+            </SignedOut>
+          </div>
         </header>
 
         {error ? (
@@ -348,15 +352,14 @@ export default function HomePage() {
   // Document view
   return (
     <main className="mx-auto max-w-[1600px] px-4 py-6 md:px-8 md:py-10">
-      <header className="mb-5 flex flex-wrap items-center justify-between gap-3">
+      <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate/75">Drift Studio</p>
-          <h1 className="font-[var(--font-serif)] text-4xl leading-none md:text-5xl">Drift</h1>
+          <h1 className="font-[var(--font-serif)] text-5xl leading-none md:text-6xl">Drift</h1>
+          <p className="mt-2 max-w-md text-base text-ink/60">
+            Track how meaning, intent, and commitments change across every version of your document.
+          </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
+        <div className="flex items-center gap-2 pt-1">
           <button
             type="button"
             onClick={goToLibrary}
@@ -364,17 +367,16 @@ export default function HomePage() {
           >
             &larr; Library
           </button>
-          <button
-            type="button"
-            onClick={() => setViewMode("editor")}
-            className={`rounded-full px-4 py-2 text-sm font-semibold ${
-              viewMode === "editor"
-                ? "bg-ink text-white"
-                : "border border-ink/20 bg-white text-ink/75 hover:bg-ink/5"
-            }`}
-          >
-            Editor
-          </button>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button className="rounded-full border border-ink/20 bg-white px-4 py-2 text-sm font-semibold hover:bg-ink/5">
+                Sign in
+              </button>
+            </SignInButton>
+          </SignedOut>
         </div>
       </header>
 
