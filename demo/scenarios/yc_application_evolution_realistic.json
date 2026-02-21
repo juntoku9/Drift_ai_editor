@@ -1,0 +1,75 @@
+{
+  "id": "yc_application_evolution_realistic",
+  "name": "YC Application Evolution",
+  "description": "A YC application draft evolves across eight revisions as claims are tightened, metrics corrected, customer insight deepened, and risk posture made credible.",
+  "payload": {
+    "title": "YC Application Draft for RelayOps",
+    "template": "memo",
+    "versions": [
+      {
+        "version": "V1",
+        "timestamp": "2026-02-01",
+        "author_name": "Ariana Kim",
+        "author_role": "Founder and CEO",
+        "author_handle": "@ariana",
+        "content": "YC Application Working Draft\nCompany name: RelayOps\nPrimary editor: Ariana Kim\n\nWhat are you building\nRelayOps is an AI operations copilot for logistics teams. We automate exception handling in shipment operations where humans currently copy data between carrier portals, email threads, and spreadsheets.\n\nWhat is the problem\nMid-market shippers lose hours every day resolving damaged freight claims, delayed handoffs, and address correction loops. Existing TMS platforms store status but do not execute the exception workflow end to end.\n\nCurrent product statement\nWe ingest events from carriers and warehouse systems, classify issues, suggest next actions, and draft outbound communication. Ops leads can approve or edit before execution.\n\nTraction snapshot\nWe have 6 pilot customers and strong enthusiasm from users.\n\nWhy now\nLarge language models can finally parse messy shipment communication and unstructured documents at useful accuracy. Logistics teams are under margin pressure and need headcount leverage.\n\nLong-term vision\nBecome the workflow layer for every post-booking shipment exception.\n\nApplication tone\nBold and high-conviction. This draft is intentionally aggressive."
+      },
+      {
+        "version": "V2",
+        "timestamp": "2026-02-03",
+        "author_name": "Devin Rao",
+        "author_role": "Co-founder and CTO",
+        "author_handle": "@devin",
+        "content": "YC Application Working Draft\nCompany name: RelayOps\nPrimary editor: Devin Rao\n\nWhat are you building\nRelayOps is an exception-resolution workflow platform for logistics teams with AI assistance built into each decision step.\n\nWhat is the problem\nOps teams process thousands of edge-case tickets where data is incomplete and resolution policy varies by customer contract. Current systems track state but do not coordinate action owners.\n\nCurrent product statement\nWe ingest event streams and inbox messages, detect exception types, route to the right queue, and generate policy-aware action drafts. Human approvers remain in the loop for high-risk actions.\n\nTechnical architecture note\nModel output is constrained by deterministic policy checks before outbound actions are allowed. We are not running fully autonomous execution.\n\nTraction snapshot\n6 pilot logos remain active, but usage quality varies by account and lane type.\n\nWhat changed in this draft\nRemoved language implying full automation.\nClarified human-in-the-loop boundaries.\nClarified that reliability and policy correctness are more important than demo speed.\n\nWhy now\nData exhaust from logistics systems is rich but underused. Better model orchestration and policy systems now make operational automation practical without fully removing human control."
+      },
+      {
+        "version": "V3",
+        "timestamp": "2026-02-05",
+        "author_name": "Mina Lopez",
+        "author_role": "Growth Advisor",
+        "author_handle": "@mina",
+        "content": "YC Application Working Draft\nCompany name: RelayOps\nPrimary editor: Mina Lopez\n\nWhat are you building\nRelayOps is workflow infrastructure for shipment exceptions. We reduce manual triage and response time for logistics ops teams.\n\nWho feels the pain\nDispatch managers and customer operations leads at freight brokers and 3PLs.\n\nProof users want this\nAcross pilot accounts, team leads report same-day reduction in backlog once we route and draft first response. Users care less about AI novelty and more about faster closure and fewer escalations.\n\nTraction snapshot\n6 pilots in progress.\n4 accounts have weekly active users.\n2 accounts are still in setup and not yet stable.\n\nCommercial direction in this draft\nShifted from broad top-of-funnel language to narrow ICP narrative.\nAdded clearer target buyer and workflow entry point.\nAdded repeatable ROI framing around backlog reduction and resolution time.\n\nWhy now\nTeams are being asked to maintain service levels without adding headcount. Point tools do not solve cross-system coordination.\n\nApplication positioning\nLess hype, more concrete buyer pain and measurable impact."
+      },
+      {
+        "version": "V4",
+        "timestamp": "2026-02-08",
+        "author_name": "Ariana Kim",
+        "author_role": "Founder and CEO",
+        "author_handle": "@ariana",
+        "content": "YC Application Working Draft\nCompany name: RelayOps\nPrimary editor: Ariana Kim\n\nWhat are you building\nRelayOps helps logistics ops teams resolve shipment exceptions by combining system ingestion, policy checks, queue routing, and assisted communication.\n\nCustomer evidence\nWe re-ran account-level metrics to avoid overclaiming. Prior draft language implied broad traction too early.\n\nUpdated traction snapshot\n6 pilots signed.\n4 live with weekly usage.\n3 showing meaningful workflow adoption beyond first week.\n1 account paused due to internal IT delay.\n\nEarly outcomes where data is clean\nMedian first-response time down 31 percent in live accounts.\nEscalation-to-manager rate down 18 percent on handled exception types.\n\nWhat changed in this draft\nRemoved ambiguous phrase \"strong enthusiasm\".\nAdded account-quality breakdown.\nAdded measured outcomes with explicit scope limits.\n\nOpen weakness we now state directly\nCurrent product handles a subset of exception types well, not full exception universe.\n\nApplication tone\nStill ambitious, but now grounded in measurable and defensible claims."
+      },
+      {
+        "version": "V5",
+        "timestamp": "2026-02-10",
+        "author_name": "Priya Nwosu",
+        "author_role": "Customer Discovery Lead",
+        "author_handle": "@priya",
+        "content": "YC Application Working Draft\nCompany name: RelayOps\nPrimary editor: Priya Nwosu\n\nWhat are you building\nRelayOps is a decision-support workflow layer for shipment exceptions, focused first on damaged freight and delayed handoff categories.\n\nCustomer discovery synthesis\nWe interviewed 17 operations leaders in freight brokerage and 3PL environments.\nMost teams are not asking for full autonomy. They want predictable routing, policy consistency, and faster first response.\n\nTop adoption blockers identified\nPolicy mismatch across customer contracts.\nData quality gaps from carrier event feeds.\nTrust concerns when automated drafts sound generic or overly confident.\n\nProduct refinements based on discovery\nNarrowed initial category focus to high-volume exception types with cleaner policy boundaries.\nAdded mandatory confidence and rationale snippets for every suggested action.\nAdded per-customer policy profile as core onboarding step.\n\nTraction snapshot retained\n6 pilots signed, 4 live, 3 showing sustained usage.\n\nWhat changed in this draft\nShifted narrative from broad automation platform to narrow wedge with explicit expansion path.\nAdded blockers section to show honest understanding of implementation risk."
+      },
+      {
+        "version": "V6",
+        "timestamp": "2026-02-12",
+        "author_name": "Iris Patel",
+        "author_role": "Legal Advisor",
+        "author_handle": "@iris.legal",
+        "content": "YC Application Working Draft\nCompany name: RelayOps\nPrimary editor: Iris Patel\n\nWhat are you building\nRelayOps provides assisted workflow execution for shipment exceptions with human approval controls and audit logging.\n\nCompliance and liability language update\nPrior versions used language that could imply autonomous decisioning. This version clarifies that high-impact actions require human approval and that policy checks are mandatory pre-send controls.\n\nData handling posture\nWe process operational shipment data and communication metadata.\nWe do not require storage of sensitive identity documents for core workflow categories in current scope.\n\nRisk controls now described in application\nAudit trail for suggested and approved actions.\nRole-based approval thresholds by customer.\nConfigurable policy constraints before outbound communication.\n\nTraction and product scope retained from V5\n6 pilots signed, 4 live, 3 sustained.\nFocused category wedge remains damaged freight and delayed handoff.\n\nWhat changed in this draft\nRemoved legal-risky wording around autonomous resolution.\nAdded explicit guardrail language and approval boundaries.\nStrengthened credibility of enterprise readiness narrative."
+      },
+      {
+        "version": "V7",
+        "timestamp": "2026-02-14",
+        "author_name": "Noah Feld",
+        "author_role": "Finance and Operations",
+        "author_handle": "@noah",
+        "content": "YC Application Working Draft\nCompany name: RelayOps\nPrimary editor: Noah Feld\n\nWhat are you building\nRelayOps improves exception-resolution throughput for logistics operations teams with policy-aware assisted workflows.\n\nRevenue and pricing clarity added\nPrior draft avoided concrete commercial structure. This version adds current pricing model and conversion assumptions.\n\nCurrent commercial snapshot\n2 pilots converted to paid annual contracts.\nBlended ACV for converted accounts is 54 thousand.\nPipeline includes 9 qualified accounts in similar segment.\n\nUnit-economic signal in current stage\nOnboarding effort is still high and must be reduced for scale.\nGross margin profile appears healthy if support load declines after onboarding templates mature.\n\nWhat changed in this draft\nAdded paid conversion data and ACV.\nRemoved implied near-term hypergrowth language.\nAdded explicit scaling bottleneck around onboarding cost.\n\nHonest risk statement\nIf we do not productize onboarding in the next two quarters, growth will remain services-constrained."
+      },
+      {
+        "version": "V8",
+        "timestamp": "2026-02-16",
+        "author_name": "Ariana Kim",
+        "author_role": "Founder and CEO",
+        "author_handle": "@ariana",
+        "content": "YC Application Working Draft\nCompany name: RelayOps\nPrimary editor: Ariana Kim\n\nWhat are you building\nRelayOps is a policy-aware workflow system for logistics exception handling. We reduce resolution time and escalation load by routing issues, generating constrained action drafts, and keeping humans in approval control for higher-risk actions.\n\nWho this is for\nInitial segment is mid-market freight brokers and 3PL operators with high exception volume and fragmented tools.\n\nCurrent traction summary\n6 pilots signed.\n4 live.\n3 with sustained weekly usage.\n2 converted to paid annual contracts at 54 thousand blended ACV.\n\nWhat works today\nFaster first response and lower escalation rates in the exception categories we support.\nStrong buyer interest when we frame value as operational throughput and policy consistency.\n\nWhat is still hard\nOnboarding is too manual.\nData quality varies across carrier integrations.\nCoverage is strong for selected categories but incomplete for long-tail exceptions.\n\nWhy now\nTeams need headcount leverage and control consistency, not more dashboarding.\nModel capability plus policy-constrained orchestration makes this feasible now in workflows that were previously too messy.\n\nWhat we are asking YC to believe\nWe can win by starting with one painful wedge, proving measurable workflow value, and expanding category coverage while keeping trust and control intact.\n\nFounder note\nThis final version intentionally favors credibility over hype and reflects what we have actually learned in pilots."
+      }
+    ]
+  }
+}

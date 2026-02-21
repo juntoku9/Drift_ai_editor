@@ -1,0 +1,34 @@
+Scenario: YC Application Evolution
+Document title: YC Application Draft for RelayOps
+Version: V2
+Date: 2026-02-03
+Editor: Devin Rao
+Role: Co-founder and CTO
+Handle: @devin
+
+YC Application Working Draft
+Company name: RelayOps
+Primary editor: Devin Rao
+
+What are you building
+RelayOps is an exception-resolution workflow platform for logistics teams with AI assistance built into each decision step.
+
+What is the problem
+Ops teams process thousands of edge-case tickets where data is incomplete and resolution policy varies by customer contract. Current systems track state but do not coordinate action owners.
+
+Current product statement
+We ingest event streams and inbox messages, detect exception types, route to the right queue, and generate policy-aware action drafts. Human approvers remain in the loop for high-risk actions.
+
+Technical architecture note
+Model output is constrained by deterministic policy checks before outbound actions are allowed. We are not running fully autonomous execution.
+
+Traction snapshot
+6 pilot logos remain active, but usage quality varies by account and lane type.
+
+What changed in this draft
+Removed language implying full automation.
+Clarified human-in-the-loop boundaries.
+Clarified that reliability and policy correctness are more important than demo speed.
+
+Why now
+Data exhaust from logistics systems is rich but underused. Better model orchestration and policy systems now make operational automation practical without fully removing human control.

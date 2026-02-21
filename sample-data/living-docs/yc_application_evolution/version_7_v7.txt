@@ -1,0 +1,34 @@
+Scenario: YC Application Evolution
+Document title: YC Application Draft for RelayOps
+Version: V7
+Date: 2026-02-14
+Editor: Noah Feld
+Role: Finance and Operations
+Handle: @noah
+
+YC Application Working Draft
+Company name: RelayOps
+Primary editor: Noah Feld
+
+What are you building
+RelayOps improves exception-resolution throughput for logistics operations teams with policy-aware assisted workflows.
+
+Revenue and pricing clarity added
+Prior draft avoided concrete commercial structure. This version adds current pricing model and conversion assumptions.
+
+Current commercial snapshot
+2 pilots converted to paid annual contracts.
+Blended ACV for converted accounts is 54 thousand.
+Pipeline includes 9 qualified accounts in similar segment.
+
+Unit-economic signal in current stage
+Onboarding effort is still high and must be reduced for scale.
+Gross margin profile appears healthy if support load declines after onboarding templates mature.
+
+What changed in this draft
+Added paid conversion data and ACV.
+Removed implied near-term hypergrowth language.
+Added explicit scaling bottleneck around onboarding cost.
+
+Honest risk statement
+If we do not productize onboarding in the next two quarters, growth will remain services-constrained.

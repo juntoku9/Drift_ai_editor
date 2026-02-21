@@ -1,0 +1,35 @@
+Scenario: YC Application Evolution
+Document title: YC Application Draft for RelayOps
+Version: V5
+Date: 2026-02-10
+Editor: Priya Nwosu
+Role: Customer Discovery Lead
+Handle: @priya
+
+YC Application Working Draft
+Company name: RelayOps
+Primary editor: Priya Nwosu
+
+What are you building
+RelayOps is a decision-support workflow layer for shipment exceptions, focused first on damaged freight and delayed handoff categories.
+
+Customer discovery synthesis
+We interviewed 17 operations leaders in freight brokerage and 3PL environments.
+Most teams are not asking for full autonomy. They want predictable routing, policy consistency, and faster first response.
+
+Top adoption blockers identified
+Policy mismatch across customer contracts.
+Data quality gaps from carrier event feeds.
+Trust concerns when automated drafts sound generic or overly confident.
+
+Product refinements based on discovery
+Narrowed initial category focus to high-volume exception types with cleaner policy boundaries.
+Added mandatory confidence and rationale snippets for every suggested action.
+Added per-customer policy profile as core onboarding step.
+
+Traction snapshot retained
+6 pilots signed, 4 live, 3 showing sustained usage.
+
+What changed in this draft
+Shifted narrative from broad automation platform to narrow wedge with explicit expansion path.
+Added blockers section to show honest understanding of implementation risk.

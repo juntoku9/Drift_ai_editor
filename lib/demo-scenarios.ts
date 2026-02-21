@@ -2,6 +2,7 @@ import investmentScenario from "@/demo/scenarios/series_a_investment_memo_realis
 import travelPrdScenario from "@/demo/scenarios/ai_travel_prd_realistic.json";
 import acquisitionLegalScenario from "@/demo/scenarios/startup_acquisition_legal_memo_realistic.json";
 import apiSpecScenario from "@/demo/scenarios/api_service_engineering_spec_realistic.json";
+import ycApplicationScenario from "@/demo/scenarios/yc_application_evolution_realistic.json";
 import type { AnalyzeRequest } from "@/lib/types";
 import { analyzeRequestSchema } from "@/lib/ai/schema";
 
@@ -27,7 +28,8 @@ const scenarios: DemoScenario[] = [
   toScenario(investmentScenario),
   toScenario(travelPrdScenario),
   toScenario(acquisitionLegalScenario),
-  toScenario(apiSpecScenario)
+  toScenario(apiSpecScenario),
+  toScenario(ycApplicationScenario)
 ];
 
 export function listDemoScenarios(): DemoScenario[] {

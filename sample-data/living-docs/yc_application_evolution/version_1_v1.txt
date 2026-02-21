@@ -1,0 +1,32 @@
+Scenario: YC Application Evolution
+Document title: YC Application Draft for RelayOps
+Version: V1
+Date: 2026-02-01
+Editor: Ariana Kim
+Role: Founder and CEO
+Handle: @ariana
+
+YC Application Working Draft
+Company name: RelayOps
+Primary editor: Ariana Kim
+
+What are you building
+RelayOps is an AI operations copilot for logistics teams. We automate exception handling in shipment operations where humans currently copy data between carrier portals, email threads, and spreadsheets.
+
+What is the problem
+Mid-market shippers lose hours every day resolving damaged freight claims, delayed handoffs, and address correction loops. Existing TMS platforms store status but do not execute the exception workflow end to end.
+
+Current product statement
+We ingest events from carriers and warehouse systems, classify issues, suggest next actions, and draft outbound communication. Ops leads can approve or edit before execution.
+
+Traction snapshot
+We have 6 pilot customers and strong enthusiasm from users.
+
+Why now
+Large language models can finally parse messy shipment communication and unstructured documents at useful accuracy. Logistics teams are under margin pressure and need headcount leverage.
+
+Long-term vision
+Become the workflow layer for every post-booking shipment exception.
+
+Application tone
+Bold and high-conviction. This draft is intentionally aggressive.

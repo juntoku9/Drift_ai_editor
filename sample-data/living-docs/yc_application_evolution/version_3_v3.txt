@@ -1,0 +1,36 @@
+Scenario: YC Application Evolution
+Document title: YC Application Draft for RelayOps
+Version: V3
+Date: 2026-02-05
+Editor: Mina Lopez
+Role: Growth Advisor
+Handle: @mina
+
+YC Application Working Draft
+Company name: RelayOps
+Primary editor: Mina Lopez
+
+What are you building
+RelayOps is workflow infrastructure for shipment exceptions. We reduce manual triage and response time for logistics ops teams.
+
+Who feels the pain
+Dispatch managers and customer operations leads at freight brokers and 3PLs.
+
+Proof users want this
+Across pilot accounts, team leads report same-day reduction in backlog once we route and draft first response. Users care less about AI novelty and more about faster closure and fewer escalations.
+
+Traction snapshot
+6 pilots in progress.
+4 accounts have weekly active users.
+2 accounts are still in setup and not yet stable.
+
+Commercial direction in this draft
+Shifted from broad top-of-funnel language to narrow ICP narrative.
+Added clearer target buyer and workflow entry point.
+Added repeatable ROI framing around backlog reduction and resolution time.
+
+Why now
+Teams are being asked to maintain service levels without adding headcount. Point tools do not solve cross-system coordination.
+
+Application positioning
+Less hype, more concrete buyer pain and measurable impact.

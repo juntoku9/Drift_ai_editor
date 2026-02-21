@@ -1,0 +1,35 @@
+Scenario: YC Application Evolution
+Document title: YC Application Draft for RelayOps
+Version: V6
+Date: 2026-02-12
+Editor: Iris Patel
+Role: Legal Advisor
+Handle: @iris.legal
+
+YC Application Working Draft
+Company name: RelayOps
+Primary editor: Iris Patel
+
+What are you building
+RelayOps provides assisted workflow execution for shipment exceptions with human approval controls and audit logging.
+
+Compliance and liability language update
+Prior versions used language that could imply autonomous decisioning. This version clarifies that high-impact actions require human approval and that policy checks are mandatory pre-send controls.
+
+Data handling posture
+We process operational shipment data and communication metadata.
+We do not require storage of sensitive identity documents for core workflow categories in current scope.
+
+Risk controls now described in application
+Audit trail for suggested and approved actions.
+Role-based approval thresholds by customer.
+Configurable policy constraints before outbound communication.
+
+Traction and product scope retained from V5
+6 pilots signed, 4 live, 3 sustained.
+Focused category wedge remains damaged freight and delayed handoff.
+
+What changed in this draft
+Removed legal-risky wording around autonomous resolution.
+Added explicit guardrail language and approval boundaries.
+Strengthened credibility of enterprise readiness narrative.

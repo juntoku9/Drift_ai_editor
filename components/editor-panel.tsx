@@ -232,6 +232,7 @@ export function EditorPanel({
   // Diff state: which snapshot to compare against current draft
   const [diffSnap, setDiffSnap] = useState<{ snapshot: EditorSnapshot; index: number } | null>(null);
 
+
   /* Per-version drift chips from analysis */
   const versionDrifts = snapshots.map((_, i) => {
     const vLabel = `V${i + 1}`;
@@ -453,17 +454,15 @@ export function EditorPanel({
                         {/* Drift chips */}
                         {chips.length > 0 && (
                           <div className="mt-2 flex flex-wrap gap-1.5 pl-[76px]">
-                            {chips.map((d, di) => (
+                            {chips.map((d) => (
                               <span
-                                key={di}
-                                className={`inline-flex max-w-full items-center gap-1 rounded-full border px-2.5 py-1 text-xs ${CHIP_COLOR[d.type] ?? "border-ink/20 text-ink/50"}`}
+                                key={d.id}
+                                className={`inline-flex items-start gap-1 rounded-full border px-2.5 py-1 text-xs ${CHIP_COLOR[d.type] ?? "border-ink/20 text-ink/50"}`}
                               >
-                                <span className="shrink-0 font-semibold opacity-60">
+                                <span className="shrink-0 font-semibold opacity-60 pt-px">
                                   {DIRECTION[d.type] ?? "·"}
                                 </span>
-                                <span className="min-w-0 truncate font-medium">
-                                  {d.element}
-                                </span>
+                                <span className="font-medium">{d.element}</span>
                               </span>
                             ))}
                           </div>

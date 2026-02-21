@@ -1,0 +1,42 @@
+Scenario: YC Application Evolution
+Document title: YC Application Draft for RelayOps
+Version: V8
+Date: 2026-02-16
+Editor: Ariana Kim
+Role: Founder and CEO
+Handle: @ariana
+
+YC Application Working Draft
+Company name: RelayOps
+Primary editor: Ariana Kim
+
+What are you building
+RelayOps is a policy-aware workflow system for logistics exception handling. We reduce resolution time and escalation load by routing issues, generating constrained action drafts, and keeping humans in approval control for higher-risk actions.
+
+Who this is for
+Initial segment is mid-market freight brokers and 3PL operators with high exception volume and fragmented tools.
+
+Current traction summary
+6 pilots signed.
+4 live.
+3 with sustained weekly usage.
+2 converted to paid annual contracts at 54 thousand blended ACV.
+
+What works today
+Faster first response and lower escalation rates in the exception categories we support.
+Strong buyer interest when we frame value as operational throughput and policy consistency.
+
+What is still hard
+Onboarding is too manual.
+Data quality varies across carrier integrations.
+Coverage is strong for selected categories but incomplete for long-tail exceptions.
+
+Why now
+Teams need headcount leverage and control consistency, not more dashboarding.
+Model capability plus policy-constrained orchestration makes this feasible now in workflows that were previously too messy.
+
+What we are asking YC to believe
+We can win by starting with one painful wedge, proving measurable workflow value, and expanding category coverage while keeping trust and control intact.
+
+Founder note
+This final version intentionally favors credibility over hype and reflects what we have actually learned in pilots.

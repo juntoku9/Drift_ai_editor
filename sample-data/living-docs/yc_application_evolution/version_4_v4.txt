@@ -1,0 +1,38 @@
+Scenario: YC Application Evolution
+Document title: YC Application Draft for RelayOps
+Version: V4
+Date: 2026-02-08
+Editor: Ariana Kim
+Role: Founder and CEO
+Handle: @ariana
+
+YC Application Working Draft
+Company name: RelayOps
+Primary editor: Ariana Kim
+
+What are you building
+RelayOps helps logistics ops teams resolve shipment exceptions by combining system ingestion, policy checks, queue routing, and assisted communication.
+
+Customer evidence
+We re-ran account-level metrics to avoid overclaiming. Prior draft language implied broad traction too early.
+
+Updated traction snapshot
+6 pilots signed.
+4 live with weekly usage.
+3 showing meaningful workflow adoption beyond first week.
+1 account paused due to internal IT delay.
+
+Early outcomes where data is clean
+Median first-response time down 31 percent in live accounts.
+Escalation-to-manager rate down 18 percent on handled exception types.
+
+What changed in this draft
+Removed ambiguous phrase "strong enthusiasm".
+Added account-quality breakdown.
+Added measured outcomes with explicit scope limits.
+
+Open weakness we now state directly
+Current product handles a subset of exception types well, not full exception universe.
+
+Application tone
+Still ambitious, but now grounded in measurable and defensible claims.
