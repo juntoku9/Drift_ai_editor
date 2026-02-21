@@ -1,0 +1,43 @@
+{
+  "id": "startup_acquisition_legal_memo_realistic",
+  "name": "Startup Acquisition Legal Memo",
+  "description": "Realistic legal memo evolution for startup acquisition.",
+  "payload": {
+    "title": "Acquisition Legal Memo for BeaconTrace Transaction",
+    "template": "memo",
+    "versions": [
+      {
+        "version": "V1",
+        "timestamp": "2026-01-08",
+        "author_name": "Claire Douglas",
+        "author_role": "M&A Counsel",
+        "author_handle": "@claire.legal",
+        "content": "BEACONTRACE TRANSACTION\nLegal Diligence Memorandum\nPrepared by: Claire Douglas, M&A Counsel\nStatus: Preliminary\n\nTransaction Context\nBuyer is evaluating acquisition of BeaconTrace through equity purchase structure.\nTarget timeline in this draft assumes end-of-quarter close.\n\nLegal Workstreams\nIntellectual property chain-of-title verification.\nCustomer contract assignment and consent review.\nEmployment and contractor classification analysis.\nPrivacy and security compliance review.\n\nPreliminary Assessment\nNo immediate stop signal in first-pass diligence.\nCurrent risk assessment is low-to-moderate and provisional.\n\nCaveat\nThis memo is not final legal recommendation. Final deal posture depends on confirmatory diligence and document completeness."
+      },
+      {
+        "version": "V2",
+        "timestamp": "2026-01-17",
+        "author_name": "Claire Douglas",
+        "author_role": "M&A Counsel",
+        "author_handle": "@claire.legal",
+        "content": "BEACONTRACE TRANSACTION\nLegal Diligence Memorandum\nPrepared by: Claire Douglas, M&A Counsel\nStatus: Interim update\n\nTransaction Context\nBuyer is evaluating equity acquisition of BeaconTrace.\nClose timing now uncertain pending remediation of newly identified issues.\n\nLegal Findings\nIntellectual property assignment gaps identified across three core modules linked to historical contractor work.\nOne contractor entity has incomplete assignment documentation and uncertain contact status.\nTwelve enterprise customer contracts contain anti-assignment language requiring prior written consent.\nTwo contracts include termination rights if consent window is missed.\nFour long-tenure contractors may be misclassified under local labor tests.\n\nAssessment\nRisk assessment moves from low-to-moderate to elevated.\nClean-close assumption is no longer supported.\n\nRecommended Deal Posture\nProceed only with conditional close framework.\nPrepare escrow alternatives and indemnity scope for steering review.\nCreate consent workstream as critical path item.\n\nCaveat\nStrategic rationale may still hold, but legal execution risk now materially influences timeline and economics."
+      },
+      {
+        "version": "V3",
+        "timestamp": "2026-01-26",
+        "author_name": "Iris Patel",
+        "author_role": "External Counsel",
+        "author_handle": "@iris.ext",
+        "content": "BEACONTRACE TRANSACTION\nLegal Diligence Memorandum\nPrepared by: Claire Douglas\nExternal review by: Iris Patel, External Counsel\nStatus: Detailed diligence update\n\nTransaction Context\nEquity acquisition remains under consideration with condition-based close path.\n\nCarry-Forward Legal Findings\nIP assignment gaps remain unresolved.\nAnti-assignment customer consent risk remains unresolved.\nContractor classification exposure remains unresolved.\n\nAdditional Findings\nOne open-source dependency path may create source-distribution obligations unless remediated pre-close.\nData-processing addendum coverage is inconsistent for part of the EU customer set.\nIncident-notification obligations in several enterprise contracts exceed current operational controls.\n\nRecommended Controls\nIncrease escrow holdback and segment into targeted indemnity buckets.\nRequire executed assignment package for known historical contributors.\nRequire signed and dated consent plan for high-risk anti-assignment customers.\nRequire binding remediation schedule for classification and privacy-control gaps.\n\nPost-Close Governance Recommendation\nNinety-day legal remediation sprint with weekly steering updates.\nBoard-level checkpoints at day 30 and day 90.\n\nAssessment\nTransaction can still proceed, but legal controls now determine viability and residual liability profile."
+      },
+      {
+        "version": "V4",
+        "timestamp": "2026-02-04",
+        "author_name": "Deal Steering Group",
+        "author_role": "Legal and Corporate Development",
+        "author_handle": "@dealdesk",
+        "content": "BEACONTRACE TRANSACTION\nLegal Diligence Memorandum\nPrepared by: Deal Steering Group\nStatus: Final legal recommendation for signing package\n\nTransaction Context\nAcquisition remains strategically supported, but only under conditional close framework.\n\nApproved Conditions to Close\nVerified IP chain-of-title package completed.\nAssignment consents secured for contracts listed in risk annex.\nClassification remediation agreement executed with indemnity support.\nOpen-source compliance remediation validated in technical legal addendum.\n\nEconomic Protections\nEscrow holdback increased above baseline.\nSeparate indemnity buckets approved for assignment and transfer liabilities.\nDeferred consideration tied to remediation milestones.\n\nGovernance\nWeekly legal status review from signing through close.\nMandatory board visibility at day 30 and day 90 post-close.\n\nFinal Legal Position\nStandard clean-close path is retired for this transaction.\nProceed recommendation is conditional and depends on disciplined execution of approved close controls."
+      }
+    ]
+  }
+}

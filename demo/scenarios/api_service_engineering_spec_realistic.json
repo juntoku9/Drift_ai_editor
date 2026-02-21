@@ -1,0 +1,43 @@
+{
+  "id": "api_service_engineering_spec_realistic",
+  "name": "API Service Engineering Spec",
+  "description": "Realistic engineering spec evolution for API service.",
+  "payload": {
+    "title": "Engineering Specification for Event Ingestion Service v2",
+    "template": "prd",
+    "versions": [
+      {
+        "version": "V1",
+        "timestamp": "2026-01-05",
+        "author_name": "Noah Kim",
+        "author_role": "Staff Engineer",
+        "author_handle": "@noah",
+        "content": "EVENT INGESTION SERVICE V2\nEngineering Specification\nOwner: Noah Kim, Staff Engineer\nStatus: Draft\n\nProblem Statement\nCurrent ingestion API is approaching throughput and operability limits as tenant event volume grows.\n\nPrimary Objective\nAchieve five-times sustained throughput increase while improving acknowledgment latency and preserving durability guarantees.\n\nArchitecture in This Draft\nSingle-region deployment.\nStateless API tier behind managed load balancer.\nSynchronous write path to primary datastore.\nClient SDK retries for transient failures.\n\nPerformance Targets\nThroughput target 25k events per second.\nAcknowledgment p95 target under 150 milliseconds.\n\nScope\nNew ingest endpoint.\nAPI key authentication.\nSchema validation pipeline.\nBaseline rate limiting.\nUsage metering hooks.\n\nOut of Scope\nMulti-region failover.\nReplay tooling.\nTenant-specific traffic isolation.\n\nKnown Risks\nRetry amplification during dependency instability.\nDatastore pressure during spikes.\nLimited tenant-level observability during incidents."
+      },
+      {
+        "version": "V2",
+        "timestamp": "2026-01-14",
+        "author_name": "Sara Holm",
+        "author_role": "SRE Manager",
+        "author_handle": "@sre",
+        "content": "EVENT INGESTION SERVICE V2\nEngineering Specification\nOwner: Noah Kim\nUpdated by: Sara Holm, SRE Manager\nStatus: Draft\n\nProblem Statement\nCurrent ingestion API is approaching throughput and operability limits while failure behavior under stress remains too fragile for broad rollout.\n\nPrimary Objective\nMaintain five-times throughput ambition while making service behavior predictable under dependency volatility.\n\nArchitecture in This Draft\nMulti-AZ durability is now required for launch readiness.\nSynchronous path must include server-side backpressure controls.\nIdempotency keys are required for safe retry handling.\nDead-letter path is required for malformed and repeated-failure events.\n\nOperational Findings\nIncident replay showed queue growth and retry storms during dependency jitter.\nClient-only retries create cascading amplification.\nCurrent observability plan does not support tenant-level triage quickly enough.\n\nPerformance Targets\nThroughput target remains 25k events per second.\nLatency target remains p95 under 150 milliseconds with added monitoring of tail behavior.\n\nReadiness Gates Added\nFailure-mode drills complete.\nRunbooks tested with on-call ownership.\nTraffic-shedding controls validated before broad tenant onboarding.\n\nScope\nCore scope retained with reliability controls as mandatory additions.\n\nOut of Scope\nMulti-region remains staged, but failover plan documentation is now required before GA."
+      },
+      {
+        "version": "V3",
+        "timestamp": "2026-01-22",
+        "author_name": "Priya Narang",
+        "author_role": "Security Engineering",
+        "author_handle": "@sec",
+        "content": "EVENT INGESTION SERVICE V2\nEngineering Specification\nOwners: Platform Engineering and SRE\nUpdated by: Priya Narang, Security Engineering\nStatus: Draft\n\nProblem Statement\nService must meet throughput goals and contractual security/compliance expectations at the same time.\n\nPrimary Objective\nShip a durable ingestion platform with clear operational controls for high-assurance enterprise tenants.\n\nArchitecture in This Draft\nReliability controls from prior revision are retained.\nAuthentication upgraded from API key-only approach to scoped token model with key-age enforcement.\nOptional signed-request mode added for high-assurance tenants.\nImmutable audit trail required for auth failures and policy violations.\nSensitive-data detection required before persistence.\nTenant-configurable retention controls required to align with contract obligations.\n\nBlocking Items\nThreat model not complete.\nKey-rotation runbook not complete.\nData-classification tagging in pipeline not complete.\n\nPerformance Targets\nThroughput and latency targets retained.\nRelease decision now depends on control readiness, not performance only.\n\nReadiness Gates\nNo promotion beyond beta cohort until security checklist and runbooks are complete and tested.\n\nScope\nCore ingest scope retained with security controls integrated into baseline delivery."
+      },
+      {
+        "version": "V4",
+        "timestamp": "2026-02-01",
+        "author_name": "Architecture Board",
+        "author_role": "Core Platform Review",
+        "author_handle": "@arb",
+        "content": "EVENT INGESTION SERVICE V2\nEngineering Specification\nOwners: Architecture Board with Platform Engineering, SRE, Security\nStatus: Approved\n\nFinal Objective\nDeliver high-throughput ingestion with reliable failure behavior and enterprise-grade security controls.\n\nFinal Architecture\nMulti-AZ ingestion tier with asynchronous durability boundary.\nIdempotent write protocol and adaptive backpressure.\nTenant-aware throttling, telemetry, and auditability.\nIntegrated security controls at ingest edge.\n\nRollout Plan\nPhase 1 shadow traffic.\nPhase 2 limited beta with top tenants.\nPhase 3 progressive GA after readiness criteria pass.\n\nRelease Criteria\nThroughput target achieved without retry-storm patterns.\np95 and p99 latency stable under chaos scenarios.\nSecurity and compliance checklist complete.\nIncident escalation and recovery process tested.\n\nOwnership\nPlatform Engineering owns implementation and performance tuning.\nSRE owns readiness gates and incident drills.\nSecurity owns final control sign-off before GA.\n\nFinal Note\nThis approved version preserves original performance ambition while sequencing release around reliability and security reality."
+      }
+    ]
+  }
+}

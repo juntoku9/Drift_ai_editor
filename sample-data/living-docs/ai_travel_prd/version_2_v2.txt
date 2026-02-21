@@ -1,0 +1,50 @@
+Scenario: AI Travel App PRD
+Document title: Product Requirements Document for Atlas Travel Copilot
+Version: V2
+Date: 2026-01-12
+Editor: Ravi Menon
+Role: Engineering Lead
+Handle: @ravi
+
+ATLAS TRAVEL COPILOT
+Product Requirements Document
+Owner: Maya Ortiz
+Updated by: Ravi Menon, Engineering Lead
+Status: Working draft
+
+Product Goal
+Atlas converts freeform trip intent into complete day plans with alternatives users can review and edit.
+
+Launch Plan in Current Draft
+Public beta date is now treated as target, not fixed commitment.
+Rollout moves to gated beta in Q2 based on reliability thresholds.
+Initial rollout markets are narrowed to United States and Japan.
+
+Scope in Current Draft
+One-prompt itinerary generation.
+Hotel and activity recommendations.
+Editable day-by-day planner.
+Shareable itinerary links.
+Flight and hotel booking links removed from phase-one scope and deferred.
+
+Performance and Reliability Expectations
+p95 target updated to under 15 seconds for beta readiness.
+Reliability target added: blank-itinerary failure below 2 percent for two consecutive weeks.
+Incident runbook and on-call ownership required before invite expansion.
+
+Engineering Findings Informing Edits
+Production-like tests showed p95 between 19 and 28 seconds.
+Supplier timeout clusters created partial itinerary render in approximately 11 to 16 percent of requests.
+Retry behavior currently amplifies queue congestion during upstream instability.
+
+Success Metrics
+Completion and retention targets retained.
+Booking-link click-through moved to phase-two metric set.
+
+Risks
+Primary near-term risk is reliability-led trust failure at launch.
+Supplier dependency risk remains material.
+
+Open Questions
+Whether confidence labeling can offset deferred booking actions in phase one.
+Whether latency goals are realistic without architectural fallback improvements.

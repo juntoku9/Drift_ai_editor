@@ -1,0 +1,35 @@
+Scenario: Startup Acquisition Legal Memo
+Document title: Acquisition Legal Memo for BeaconTrace Transaction
+Version: V2
+Date: 2026-01-17
+Editor: Claire Douglas
+Role: M&A Counsel
+Handle: @claire.legal
+
+BEACONTRACE TRANSACTION
+Legal Diligence Memorandum
+Prepared by: Claire Douglas, M&A Counsel
+Status: Interim update
+
+Transaction Context
+Buyer is evaluating equity acquisition of BeaconTrace.
+Close timing now uncertain pending remediation of newly identified issues.
+
+Legal Findings
+Intellectual property assignment gaps identified across three core modules linked to historical contractor work.
+One contractor entity has incomplete assignment documentation and uncertain contact status.
+Twelve enterprise customer contracts contain anti-assignment language requiring prior written consent.
+Two contracts include termination rights if consent window is missed.
+Four long-tenure contractors may be misclassified under local labor tests.
+
+Assessment
+Risk assessment moves from low-to-moderate to elevated.
+Clean-close assumption is no longer supported.
+
+Recommended Deal Posture
+Proceed only with conditional close framework.
+Prepare escrow alternatives and indemnity scope for steering review.
+Create consent workstream as critical path item.
+
+Caveat
+Strategic rationale may still hold, but legal execution risk now materially influences timeline and economics.

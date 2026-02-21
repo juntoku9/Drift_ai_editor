@@ -1,0 +1,45 @@
+Scenario: API Service Engineering Spec
+Document title: Engineering Specification for Event Ingestion Service v2
+Version: V2
+Date: 2026-01-14
+Editor: Sara Holm
+Role: SRE Manager
+Handle: @sre
+
+EVENT INGESTION SERVICE V2
+Engineering Specification
+Owner: Noah Kim
+Updated by: Sara Holm, SRE Manager
+Status: Draft
+
+Problem Statement
+Current ingestion API is approaching throughput and operability limits while failure behavior under stress remains too fragile for broad rollout.
+
+Primary Objective
+Maintain five-times throughput ambition while making service behavior predictable under dependency volatility.
+
+Architecture in This Draft
+Multi-AZ durability is now required for launch readiness.
+Synchronous path must include server-side backpressure controls.
+Idempotency keys are required for safe retry handling.
+Dead-letter path is required for malformed and repeated-failure events.
+
+Operational Findings
+Incident replay showed queue growth and retry storms during dependency jitter.
+Client-only retries create cascading amplification.
+Current observability plan does not support tenant-level triage quickly enough.
+
+Performance Targets
+Throughput target remains 25k events per second.
+Latency target remains p95 under 150 milliseconds with added monitoring of tail behavior.
+
+Readiness Gates Added
+Failure-mode drills complete.
+Runbooks tested with on-call ownership.
+Traffic-shedding controls validated before broad tenant onboarding.
+
+Scope
+Core scope retained with reliability controls as mandatory additions.
+
+Out of Scope
+Multi-region remains staged, but failover plan documentation is now required before GA.

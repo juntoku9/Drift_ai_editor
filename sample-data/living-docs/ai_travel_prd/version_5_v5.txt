@@ -1,0 +1,51 @@
+Scenario: AI Travel App PRD
+Document title: Product Requirements Document for Atlas Travel Copilot
+Version: V5
+Date: 2026-02-03
+Editor: Executive Staff
+Role: Executive Review
+Handle: @exec
+
+ATLAS TRAVEL COPILOT
+Product Requirements Document
+Owners: Executive Staff with Product, Engineering, Legal, GTM
+Status: Approved direction
+
+Product Goal
+Atlas launches as a trust-first planning product and expands into broader discovery only after quality gates are met.
+
+Launch Plan
+Phased beta in Q2 is approved.
+No fixed public launch date until all gates are complete.
+
+Final Phase-One Scope
+One-prompt itinerary generation.
+Hotel and activity recommendations.
+Editable day-by-day planner.
+Shareable itinerary links.
+Terms acknowledgment and profile deletion workflow.
+Confidence cues and limitation disclosures.
+
+Deferred to Phase Two
+Direct booking links.
+Destination inspiration feed.
+Referral loop.
+Paid placements.
+
+Launch Gates
+Legal and privacy sign-off complete.
+Policy violation rate below 1 percent.
+Reliability thresholds sustained for two consecutive weeks.
+Incident ownership and escalation process tested.
+
+Ownership Model
+Product and Legal co-own launch readiness checklist.
+Engineering owns reliability operations and incident process.
+GTM owns external messaging within approved constraints.
+
+Risk Posture
+Primary launch risk remains trust failure from reliability or compliance miss.
+Expansion risk is managed by explicit phase sequencing.
+
+Decision Note
+This version keeps prior cross-functional constraints and resolves conflict through ordered rollout rather than scope inflation.

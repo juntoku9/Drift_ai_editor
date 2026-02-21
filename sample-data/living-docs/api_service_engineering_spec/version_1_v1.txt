@@ -1,0 +1,45 @@
+Scenario: API Service Engineering Spec
+Document title: Engineering Specification for Event Ingestion Service v2
+Version: V1
+Date: 2026-01-05
+Editor: Noah Kim
+Role: Staff Engineer
+Handle: @noah
+
+EVENT INGESTION SERVICE V2
+Engineering Specification
+Owner: Noah Kim, Staff Engineer
+Status: Draft
+
+Problem Statement
+Current ingestion API is approaching throughput and operability limits as tenant event volume grows.
+
+Primary Objective
+Achieve five-times sustained throughput increase while improving acknowledgment latency and preserving durability guarantees.
+
+Architecture in This Draft
+Single-region deployment.
+Stateless API tier behind managed load balancer.
+Synchronous write path to primary datastore.
+Client SDK retries for transient failures.
+
+Performance Targets
+Throughput target 25k events per second.
+Acknowledgment p95 target under 150 milliseconds.
+
+Scope
+New ingest endpoint.
+API key authentication.
+Schema validation pipeline.
+Baseline rate limiting.
+Usage metering hooks.
+
+Out of Scope
+Multi-region failover.
+Replay tooling.
+Tenant-specific traffic isolation.
+
+Known Risks
+Retry amplification during dependency instability.
+Datastore pressure during spikes.
+Limited tenant-level observability during incidents.

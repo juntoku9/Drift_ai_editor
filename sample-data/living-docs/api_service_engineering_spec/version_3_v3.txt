@@ -1,0 +1,42 @@
+Scenario: API Service Engineering Spec
+Document title: Engineering Specification for Event Ingestion Service v2
+Version: V3
+Date: 2026-01-22
+Editor: Priya Narang
+Role: Security Engineering
+Handle: @sec
+
+EVENT INGESTION SERVICE V2
+Engineering Specification
+Owners: Platform Engineering and SRE
+Updated by: Priya Narang, Security Engineering
+Status: Draft
+
+Problem Statement
+Service must meet throughput goals and contractual security/compliance expectations at the same time.
+
+Primary Objective
+Ship a durable ingestion platform with clear operational controls for high-assurance enterprise tenants.
+
+Architecture in This Draft
+Reliability controls from prior revision are retained.
+Authentication upgraded from API key-only approach to scoped token model with key-age enforcement.
+Optional signed-request mode added for high-assurance tenants.
+Immutable audit trail required for auth failures and policy violations.
+Sensitive-data detection required before persistence.
+Tenant-configurable retention controls required to align with contract obligations.
+
+Blocking Items
+Threat model not complete.
+Key-rotation runbook not complete.
+Data-classification tagging in pipeline not complete.
+
+Performance Targets
+Throughput and latency targets retained.
+Release decision now depends on control readiness, not performance only.
+
+Readiness Gates
+No promotion beyond beta cohort until security checklist and runbooks are complete and tested.
+
+Scope
+Core ingest scope retained with security controls integrated into baseline delivery.

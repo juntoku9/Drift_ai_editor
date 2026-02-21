@@ -1,0 +1,53 @@
+Scenario: Series A Investment Memo
+Document title: Northline Ventures Investment Memo for ArgoFlow AI
+Version: V2
+Date: 2026-01-15
+Editor: Mara Singh
+Role: Due Diligence Counsel
+Handle: @mara.legal
+
+NORTHLINE VENTURES
+Series A Investment Memorandum
+Target: ArgoFlow AI
+Prepared by: Ethan Park
+Reviewed and revised by: Mara Singh, Due Diligence Counsel
+Status: Internal working draft
+
+Executive Summary
+ArgoFlow remains an investable opportunity. However, current legal findings do not support an unconditional lead recommendation at the terms currently shown. The memo should be read as a conditional investment case pending defined remediation requirements.
+
+Proposed Transaction Terms
+Current valuation line in draft remains 24 million pre-money, but counsel view is that legal uncertainty is not priced adequately at this level.
+Check size assumption remains 7 million in the working model pending deal team discussion.
+
+Company and Product Context
+ArgoFlow is positioned as workflow infrastructure for regulated operations teams. Customer utility claims remain plausible and reference quality is good.
+
+Operating Metrics
+Reported ARR at year-end is 1.9 million.
+Reported gross margin is 74 percent.
+Reported net revenue retention is 136 percent for early cohort.
+No changes to metric table pending finance verification.
+
+Legal Findings Added to Core Memo
+Code provenance review found an incomplete assignment chain tied to a historical contractor contribution on ranking logic.
+Two AGPL dependencies appear linked in production execution path rather than isolated tooling paths.
+Contract language in two enterprise deals appears to overstate controls currently implemented in product.
+
+Legal Recommendation
+Do not proceed on standard structure without pre-defined legal conditions.
+Required conditions should include third-party IP opinion letter, verified AGPL remediation plan, and a contract exception schedule signed by management.
+
+Risk Section
+Legal execution risk is now a primary risk, not a secondary risk.
+Supplier concentration and enterprise sales-cycle risk remain in place.
+
+Diligence Status
+Legal diligence is now materially advanced and has identified actionable issues.
+Security diligence is still open.
+Commercial and concentration review is still in progress.
+
+Open Items for Next IC Prep
+Deal team to propose revised valuation or structure that prices legal execution risk.
+Management to provide dated remediation timeline with accountable owners.
+Counsel to prepare minimum close conditions language for IC review.

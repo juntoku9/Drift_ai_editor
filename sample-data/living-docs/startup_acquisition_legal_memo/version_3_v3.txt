@@ -1,0 +1,39 @@
+Scenario: Startup Acquisition Legal Memo
+Document title: Acquisition Legal Memo for BeaconTrace Transaction
+Version: V3
+Date: 2026-01-26
+Editor: Iris Patel
+Role: External Counsel
+Handle: @iris.ext
+
+BEACONTRACE TRANSACTION
+Legal Diligence Memorandum
+Prepared by: Claire Douglas
+External review by: Iris Patel, External Counsel
+Status: Detailed diligence update
+
+Transaction Context
+Equity acquisition remains under consideration with condition-based close path.
+
+Carry-Forward Legal Findings
+IP assignment gaps remain unresolved.
+Anti-assignment customer consent risk remains unresolved.
+Contractor classification exposure remains unresolved.
+
+Additional Findings
+One open-source dependency path may create source-distribution obligations unless remediated pre-close.
+Data-processing addendum coverage is inconsistent for part of the EU customer set.
+Incident-notification obligations in several enterprise contracts exceed current operational controls.
+
+Recommended Controls
+Increase escrow holdback and segment into targeted indemnity buckets.
+Require executed assignment package for known historical contributors.
+Require signed and dated consent plan for high-risk anti-assignment customers.
+Require binding remediation schedule for classification and privacy-control gaps.
+
+Post-Close Governance Recommendation
+Ninety-day legal remediation sprint with weekly steering updates.
+Board-level checkpoints at day 30 and day 90.
+
+Assessment
+Transaction can still proceed, but legal controls now determine viability and residual liability profile.

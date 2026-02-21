@@ -1,0 +1,53 @@
+Scenario: AI Travel App PRD
+Document title: Product Requirements Document for Atlas Travel Copilot
+Version: V3
+Date: 2026-01-18
+Editor: Alina Zhou
+Role: Legal Counsel
+Handle: @alina.legal
+
+ATLAS TRAVEL COPILOT
+Product Requirements Document
+Owners: Product and Engineering
+Updated by: Alina Zhou, Legal Counsel
+Status: Working draft
+
+Product Goal
+Atlas provides informational travel planning suggestions and editable day plans.
+
+Launch Plan in Current Draft
+Q2 gated beta remains plan.
+No fixed public date may be communicated before legal and privacy sign-off.
+
+Scope in Current Draft
+One-prompt itinerary generation.
+Hotel and activity recommendations.
+Editable day-by-day planner.
+Shareable itinerary links.
+Confidence cues and limitation disclosures included.
+Terms acknowledgment required before first itinerary generation.
+Profile deletion workflow required.
+Direct booking links remain deferred.
+
+Mandatory Legal and Privacy Requirements
+User-facing language must state recommendations are informational and not guaranteed availability, pricing, or safety advice.
+Terms acceptance must occur before first itinerary request.
+Passport and government-ID data collection is prohibited in MVP.
+Recommendation generation and acknowledgment events must be auditable.
+
+Performance and Reliability Expectations
+Reliability gates from engineering revision remain in force.
+p95 beta target remains under 15 seconds.
+Blank-itinerary failure threshold remains below 2 percent for two consecutive weeks.
+
+Success Metrics
+Completion and retention targets retained.
+Policy-violation tracking added as launch health metric.
+
+Risks
+Legal non-compliance risk now equals reliability risk in launch decisioning.
+Paid placement concepts are blocked pending disclosure framework.
+
+Open Questions
+Whether geo-specific disclaimer variants are required.
+Whether under-18 access should be restricted in initial release.

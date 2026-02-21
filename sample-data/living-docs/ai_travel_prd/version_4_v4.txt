@@ -1,0 +1,50 @@
+Scenario: AI Travel App PRD
+Document title: Product Requirements Document for Atlas Travel Copilot
+Version: V4
+Date: 2026-01-27
+Editor: Niko Brandt
+Role: GTM Lead
+Handle: @niko
+
+ATLAS TRAVEL COPILOT
+Product Requirements Document
+Owners: Product, Engineering, Legal
+Updated by: Niko Brandt, GTM Lead
+Status: Working draft
+
+Product Goal
+Atlas provides travel planning assistance and aims to become a repeat discovery and planning surface over time.
+
+Launch Plan in Current Draft
+Q2 gated beta remains unchanged.
+No fixed public launch date remains unchanged.
+
+Scope in Current Draft
+Phase-one scope remains planning-first:
+One-prompt itinerary generation.
+Hotel and activity recommendations.
+Editable day-by-day planner.
+Shareable itinerary links.
+Terms acknowledgment and profile deletion.
+Confidence and limitation disclosures.
+
+GTM Proposal Added to Strategy Section
+Destination inspiration feed proposed for growth.
+Social itinerary card format proposed for distribution.
+Referral loop proposed for post-plan conversion.
+
+Cross-Functional Review Notes Captured in Draft
+Engineering notes that adding new surfaces before reliability gates increases launch risk.
+Legal notes referral concept may be viable, but sponsored placement requires disclosure design and review.
+Product notes that phase-one trust and reliability commitments should not be diluted.
+
+Current Resolution in Draft
+Discovery and referral ideas remain in strategy section only.
+They are listed as phase-two candidates, not phase-one commitments.
+
+Risks
+Risk of narrative drift toward breadth before trust baseline is established.
+Risk of execution overload if growth surfaces are pulled into phase one.
+
+Open Questions
+Can launch-quarter demand goals be reached through messaging and partnerships without adding product surfaces in phase one.

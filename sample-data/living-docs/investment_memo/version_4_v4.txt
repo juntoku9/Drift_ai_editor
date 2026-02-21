@@ -1,0 +1,45 @@
+Scenario: Series A Investment Memo
+Document title: Northline Ventures Investment Memo for ArgoFlow AI
+Version: V4
+Date: 2026-02-02
+Editor: IC Operations
+Role: Investment Committee
+Handle: @icops
+
+NORTHLINE VENTURES
+Series A Investment Memorandum
+Target: ArgoFlow AI
+Prepared by: Ethan Park
+Reviewed by: Mara Singh and Jonah Lee
+Final decision record by: IC Operations
+Status: Approved with conditions
+
+Executive Summary
+Investment Committee approved proceeding on revised economics and conditional structure. Prior unrestricted lead recommendation is superseded by this final decision record.
+
+Approved Transaction Terms
+Approved valuation is 18 million pre-money.
+Approved total commitment is 5.2 million split across two tranches.
+Board observer rights included.
+
+Conditions Required Before Tranche Two
+External IP opinion letter confirming no unresolved ownership claim on core ranking component.
+AGPL remediation completed and verified by outside technical counsel.
+Concentration mitigation plan with named owners for top renewals and explicit escalation checkpoints.
+
+Ongoing Governance Covenants
+Quarterly concentration reporting on top-ten accounts.
+Semi-annual security control attestation.
+Immediate committee notice if top-two churn risk exceeds defined threshold.
+
+Risk Position at Approval
+Primary risk stack at approval remains legal execution, concentration exposure, and competitive pressure.
+Committee view is that approved structure prices this risk and preserves upside if execution improves.
+
+Dissent
+One IC member opposed approval, citing combined legal and concentration risk as outside first-check policy.
+
+Action Items
+Deal lead to confirm founder acceptance on tranche mechanics.
+Counsel to circulate final condition checklist.
+Finance to update ownership model with approved economics.

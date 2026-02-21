@@ -1,0 +1,47 @@
+Scenario: AI Travel App PRD
+Document title: Product Requirements Document for Atlas Travel Copilot
+Version: V1
+Date: 2026-01-04
+Editor: Maya Ortiz
+Role: Head of Product
+Handle: @maya
+
+ATLAS TRAVEL COPILOT
+Product Requirements Document
+Owner: Maya Ortiz, Head of Product
+Status: Working draft
+
+Product Goal
+Atlas converts freeform trip intent into complete day plans that users can act on immediately. Inputs include destination, dates, budget, constraints, and preference signals.
+
+Launch Plan in Current Draft
+Public beta date is March 20.
+Initial market coverage includes United States, Japan, Italy, and Thailand.
+Launch narrative assumes broad availability and complete plan-to-action flow.
+
+Scope in Current Draft
+One-prompt itinerary generation.
+Hotel and activity recommendations.
+Flight and hotel booking links.
+Editable day-by-day planner.
+Shareable itinerary links.
+
+Performance and Reliability Expectations
+p95 generation target under 10 seconds.
+Confidence cues should be visible but lightweight.
+Supplier freshness checks should run before rendering recommendations.
+
+Success Metrics
+Itinerary completion rate above 85 percent.
+Booking-link click-through above 20 percent.
+Day-14 retention above 24 percent.
+
+Risks
+Supplier reliability variability.
+Stale pricing and availability mismatch.
+User trust degradation if output quality drops during peak demand.
+
+Open Questions
+How much detail should first response include versus speed.
+Whether multi-city itinerary is required in beta scope.
+Whether confidence labels should be mandatory in all plan sections.

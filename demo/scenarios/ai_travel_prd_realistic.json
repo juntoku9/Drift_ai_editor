@@ -1,0 +1,51 @@
+{
+  "id": "ai_travel_prd_realistic",
+  "name": "AI Travel App PRD",
+  "description": "Realistic PRD evolution with cumulative edits by product, engineering, legal, GTM, and exec.",
+  "payload": {
+    "title": "Product Requirements Document for Atlas Travel Copilot",
+    "template": "prd",
+    "versions": [
+      {
+        "version": "V1",
+        "timestamp": "2026-01-04",
+        "author_name": "Maya Ortiz",
+        "author_role": "Head of Product",
+        "author_handle": "@maya",
+        "content": "ATLAS TRAVEL COPILOT\nProduct Requirements Document\nOwner: Maya Ortiz, Head of Product\nStatus: Working draft\n\nProduct Goal\nAtlas converts freeform trip intent into complete day plans that users can act on immediately. Inputs include destination, dates, budget, constraints, and preference signals.\n\nLaunch Plan in Current Draft\nPublic beta date is March 20.\nInitial market coverage includes United States, Japan, Italy, and Thailand.\nLaunch narrative assumes broad availability and complete plan-to-action flow.\n\nScope in Current Draft\nOne-prompt itinerary generation.\nHotel and activity recommendations.\nFlight and hotel booking links.\nEditable day-by-day planner.\nShareable itinerary links.\n\nPerformance and Reliability Expectations\np95 generation target under 10 seconds.\nConfidence cues should be visible but lightweight.\nSupplier freshness checks should run before rendering recommendations.\n\nSuccess Metrics\nItinerary completion rate above 85 percent.\nBooking-link click-through above 20 percent.\nDay-14 retention above 24 percent.\n\nRisks\nSupplier reliability variability.\nStale pricing and availability mismatch.\nUser trust degradation if output quality drops during peak demand.\n\nOpen Questions\nHow much detail should first response include versus speed.\nWhether multi-city itinerary is required in beta scope.\nWhether confidence labels should be mandatory in all plan sections."
+      },
+      {
+        "version": "V2",
+        "timestamp": "2026-01-12",
+        "author_name": "Ravi Menon",
+        "author_role": "Engineering Lead",
+        "author_handle": "@ravi",
+        "content": "ATLAS TRAVEL COPILOT\nProduct Requirements Document\nOwner: Maya Ortiz\nUpdated by: Ravi Menon, Engineering Lead\nStatus: Working draft\n\nProduct Goal\nAtlas converts freeform trip intent into complete day plans with alternatives users can review and edit.\n\nLaunch Plan in Current Draft\nPublic beta date is now treated as target, not fixed commitment.\nRollout moves to gated beta in Q2 based on reliability thresholds.\nInitial rollout markets are narrowed to United States and Japan.\n\nScope in Current Draft\nOne-prompt itinerary generation.\nHotel and activity recommendations.\nEditable day-by-day planner.\nShareable itinerary links.\nFlight and hotel booking links removed from phase-one scope and deferred.\n\nPerformance and Reliability Expectations\np95 target updated to under 15 seconds for beta readiness.\nReliability target added: blank-itinerary failure below 2 percent for two consecutive weeks.\nIncident runbook and on-call ownership required before invite expansion.\n\nEngineering Findings Informing Edits\nProduction-like tests showed p95 between 19 and 28 seconds.\nSupplier timeout clusters created partial itinerary render in approximately 11 to 16 percent of requests.\nRetry behavior currently amplifies queue congestion during upstream instability.\n\nSuccess Metrics\nCompletion and retention targets retained.\nBooking-link click-through moved to phase-two metric set.\n\nRisks\nPrimary near-term risk is reliability-led trust failure at launch.\nSupplier dependency risk remains material.\n\nOpen Questions\nWhether confidence labeling can offset deferred booking actions in phase one.\nWhether latency goals are realistic without architectural fallback improvements."
+      },
+      {
+        "version": "V3",
+        "timestamp": "2026-01-18",
+        "author_name": "Alina Zhou",
+        "author_role": "Legal Counsel",
+        "author_handle": "@alina.legal",
+        "content": "ATLAS TRAVEL COPILOT\nProduct Requirements Document\nOwners: Product and Engineering\nUpdated by: Alina Zhou, Legal Counsel\nStatus: Working draft\n\nProduct Goal\nAtlas provides informational travel planning suggestions and editable day plans.\n\nLaunch Plan in Current Draft\nQ2 gated beta remains plan.\nNo fixed public date may be communicated before legal and privacy sign-off.\n\nScope in Current Draft\nOne-prompt itinerary generation.\nHotel and activity recommendations.\nEditable day-by-day planner.\nShareable itinerary links.\nConfidence cues and limitation disclosures included.\nTerms acknowledgment required before first itinerary generation.\nProfile deletion workflow required.\nDirect booking links remain deferred.\n\nMandatory Legal and Privacy Requirements\nUser-facing language must state recommendations are informational and not guaranteed availability, pricing, or safety advice.\nTerms acceptance must occur before first itinerary request.\nPassport and government-ID data collection is prohibited in MVP.\nRecommendation generation and acknowledgment events must be auditable.\n\nPerformance and Reliability Expectations\nReliability gates from engineering revision remain in force.\np95 beta target remains under 15 seconds.\nBlank-itinerary failure threshold remains below 2 percent for two consecutive weeks.\n\nSuccess Metrics\nCompletion and retention targets retained.\nPolicy-violation tracking added as launch health metric.\n\nRisks\nLegal non-compliance risk now equals reliability risk in launch decisioning.\nPaid placement concepts are blocked pending disclosure framework.\n\nOpen Questions\nWhether geo-specific disclaimer variants are required.\nWhether under-18 access should be restricted in initial release."
+      },
+      {
+        "version": "V4",
+        "timestamp": "2026-01-27",
+        "author_name": "Niko Brandt",
+        "author_role": "GTM Lead",
+        "author_handle": "@niko",
+        "content": "ATLAS TRAVEL COPILOT\nProduct Requirements Document\nOwners: Product, Engineering, Legal\nUpdated by: Niko Brandt, GTM Lead\nStatus: Working draft\n\nProduct Goal\nAtlas provides travel planning assistance and aims to become a repeat discovery and planning surface over time.\n\nLaunch Plan in Current Draft\nQ2 gated beta remains unchanged.\nNo fixed public launch date remains unchanged.\n\nScope in Current Draft\nPhase-one scope remains planning-first:\nOne-prompt itinerary generation.\nHotel and activity recommendations.\nEditable day-by-day planner.\nShareable itinerary links.\nTerms acknowledgment and profile deletion.\nConfidence and limitation disclosures.\n\nGTM Proposal Added to Strategy Section\nDestination inspiration feed proposed for growth.\nSocial itinerary card format proposed for distribution.\nReferral loop proposed for post-plan conversion.\n\nCross-Functional Review Notes Captured in Draft\nEngineering notes that adding new surfaces before reliability gates increases launch risk.\nLegal notes referral concept may be viable, but sponsored placement requires disclosure design and review.\nProduct notes that phase-one trust and reliability commitments should not be diluted.\n\nCurrent Resolution in Draft\nDiscovery and referral ideas remain in strategy section only.\nThey are listed as phase-two candidates, not phase-one commitments.\n\nRisks\nRisk of narrative drift toward breadth before trust baseline is established.\nRisk of execution overload if growth surfaces are pulled into phase one.\n\nOpen Questions\nCan launch-quarter demand goals be reached through messaging and partnerships without adding product surfaces in phase one."
+      },
+      {
+        "version": "V5",
+        "timestamp": "2026-02-03",
+        "author_name": "Executive Staff",
+        "author_role": "Executive Review",
+        "author_handle": "@exec",
+        "content": "ATLAS TRAVEL COPILOT\nProduct Requirements Document\nOwners: Executive Staff with Product, Engineering, Legal, GTM\nStatus: Approved direction\n\nProduct Goal\nAtlas launches as a trust-first planning product and expands into broader discovery only after quality gates are met.\n\nLaunch Plan\nPhased beta in Q2 is approved.\nNo fixed public launch date until all gates are complete.\n\nFinal Phase-One Scope\nOne-prompt itinerary generation.\nHotel and activity recommendations.\nEditable day-by-day planner.\nShareable itinerary links.\nTerms acknowledgment and profile deletion workflow.\nConfidence cues and limitation disclosures.\n\nDeferred to Phase Two\nDirect booking links.\nDestination inspiration feed.\nReferral loop.\nPaid placements.\n\nLaunch Gates\nLegal and privacy sign-off complete.\nPolicy violation rate below 1 percent.\nReliability thresholds sustained for two consecutive weeks.\nIncident ownership and escalation process tested.\n\nOwnership Model\nProduct and Legal co-own launch readiness checklist.\nEngineering owns reliability operations and incident process.\nGTM owns external messaging within approved constraints.\n\nRisk Posture\nPrimary launch risk remains trust failure from reliability or compliance miss.\nExpansion risk is managed by explicit phase sequencing.\n\nDecision Note\nThis version keeps prior cross-functional constraints and resolves conflict through ordered rollout rather than scope inflation."
+      }
+    ]
+  }
+}

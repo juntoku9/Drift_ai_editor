@@ -1,0 +1,51 @@
+Scenario: Series A Investment Memo
+Document title: Northline Ventures Investment Memo for ArgoFlow AI
+Version: V3
+Date: 2026-01-24
+Editor: Jonah Lee
+Role: Portfolio Partner
+Handle: @jonah
+
+NORTHLINE VENTURES
+Series A Investment Memorandum
+Target: ArgoFlow AI
+Prepared by: Ethan Park
+Reviewed by: Mara Singh
+Revised by: Jonah Lee, Portfolio Partner
+Status: Internal working draft
+
+Executive Summary
+The opportunity remains attractive, but the current case is now best framed as a structured risk-underwritten investment rather than a standard high-conviction lead. Legal risk from prior revision remains unresolved and market/commercial concentration risk is higher than originally modeled.
+
+Proposed Transaction Terms
+Prior model line at 24 million pre-money is no longer recommended.
+Proposed updated structure is 18 million pre-money with 5.2 million total commitment split into two tranches.
+Second tranche should be gated by legal remediation completion and concentration-risk milestones.
+
+Company and Product Context
+Core product thesis remains intact. Customers continue to describe operational dependence on workflow routing and evidence traceability.
+
+Operating Metrics
+ARR remains 1.9 million per latest update.
+Net revenue retention remains reported at 136 percent.
+No accounting restatement noted at this stage.
+
+Commercial and Market Analysis Added
+Top four accounts represent 61 percent of recurring revenue.
+Largest account renewal is within six months and procurement team is actively evaluating alternatives.
+Competitive pressure has increased in the last quarter with two adjacent vendors moving up-market.
+
+Portfolio Considerations
+There is partial overlap at workflow layer with one existing portfolio company. This is manageable but requires explicit governance protocol before board-level involvement.
+
+Risk Section
+Primary risks are now legal execution, customer concentration, and competitive window compression.
+Supplier concentration and sales-cycle length remain material but secondary to the three primary items.
+
+Diligence Status
+Legal issues are defined but not remediated.
+Security diligence remains open.
+Concentration mitigation planning is pending management response.
+
+Recommendation
+Proceed only under staged-capital structure with explicit close conditions, milestone governance, and downside controls that are stronger than standard template.

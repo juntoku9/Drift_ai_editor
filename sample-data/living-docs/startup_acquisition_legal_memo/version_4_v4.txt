@@ -1,0 +1,34 @@
+Scenario: Startup Acquisition Legal Memo
+Document title: Acquisition Legal Memo for BeaconTrace Transaction
+Version: V4
+Date: 2026-02-04
+Editor: Deal Steering Group
+Role: Legal and Corporate Development
+Handle: @dealdesk
+
+BEACONTRACE TRANSACTION
+Legal Diligence Memorandum
+Prepared by: Deal Steering Group
+Status: Final legal recommendation for signing package
+
+Transaction Context
+Acquisition remains strategically supported, but only under conditional close framework.
+
+Approved Conditions to Close
+Verified IP chain-of-title package completed.
+Assignment consents secured for contracts listed in risk annex.
+Classification remediation agreement executed with indemnity support.
+Open-source compliance remediation validated in technical legal addendum.
+
+Economic Protections
+Escrow holdback increased above baseline.
+Separate indemnity buckets approved for assignment and transfer liabilities.
+Deferred consideration tied to remediation milestones.
+
+Governance
+Weekly legal status review from signing through close.
+Mandatory board visibility at day 30 and day 90 post-close.
+
+Final Legal Position
+Standard clean-close path is retired for this transaction.
+Proceed recommendation is conditional and depends on disciplined execution of approved close controls.

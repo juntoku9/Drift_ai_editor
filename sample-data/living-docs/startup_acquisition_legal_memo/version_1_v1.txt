@@ -1,0 +1,29 @@
+Scenario: Startup Acquisition Legal Memo
+Document title: Acquisition Legal Memo for BeaconTrace Transaction
+Version: V1
+Date: 2026-01-08
+Editor: Claire Douglas
+Role: M&A Counsel
+Handle: @claire.legal
+
+BEACONTRACE TRANSACTION
+Legal Diligence Memorandum
+Prepared by: Claire Douglas, M&A Counsel
+Status: Preliminary
+
+Transaction Context
+Buyer is evaluating acquisition of BeaconTrace through equity purchase structure.
+Target timeline in this draft assumes end-of-quarter close.
+
+Legal Workstreams
+Intellectual property chain-of-title verification.
+Customer contract assignment and consent review.
+Employment and contractor classification analysis.
+Privacy and security compliance review.
+
+Preliminary Assessment
+No immediate stop signal in first-pass diligence.
+Current risk assessment is low-to-moderate and provisional.
+
+Caveat
+This memo is not final legal recommendation. Final deal posture depends on confirmatory diligence and document completeness.

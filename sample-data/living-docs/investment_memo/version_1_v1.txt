@@ -1,0 +1,52 @@
+Scenario: Series A Investment Memo
+Document title: Northline Ventures Investment Memo for ArgoFlow AI
+Version: V1
+Date: 2026-01-06
+Editor: Ethan Park
+Role: Senior Analyst
+Handle: @ethan
+
+NORTHLINE VENTURES
+Series A Investment Memorandum
+Target: ArgoFlow AI
+Prepared by: Ethan Park, Senior Analyst
+Status: Internal working draft
+
+Executive Summary
+ArgoFlow builds workflow orchestration software for regulated operations teams. The product routes operational exceptions, approvals, and evidence collection across fragmented systems that are currently handled through manual queue management. Initial customer behavior suggests the product is becoming embedded in production workflows, which is the core reason this opportunity is attractive.
+
+Proposed Transaction Terms
+Proposed valuation in this draft is 24 million pre-money.
+Proposed check is 7 million primary.
+Target ownership is approximately 22.6 percent on close assumptions in the current model.
+
+Company and Product Context
+ArgoFlow is positioned as workflow infrastructure rather than a point solution. Product architecture is built around configurable rule paths, approval graphs, and audit traceability. Customer references describe value in reduced time-to-resolution for exception cases and reduced operational burden for compliance teams.
+
+Operating Metrics
+Reported ARR at year-end is 1.9 million.
+ARR approximately nine months prior was 0.6 million.
+Reported gross margin is 74 percent.
+Reported net revenue retention for early enterprise cohort is 136 percent.
+Average initial contract value is around 72 thousand with larger regulated accounts above 180 thousand.
+
+Team Assessment
+Chief Executive has prior enterprise go-to-market leadership experience and appears credible with buyers.
+Chief Technology Officer remains close to core architecture and deployment decisions.
+Broader engineering team appears strong for current stage and customer complexity.
+
+Primary Investment View
+If ArgoFlow continues to become a system-of-record layer for approvals and audit evidence inside customer operations, expansion dynamics should improve and churn should remain structurally low.
+
+Risk Section
+Current key risks in this draft are supplier concentration in model infrastructure, long enterprise procurement cycles, and uncertainty about repeatability outside first cohort.
+
+Diligence Status
+Legal diligence is not complete.
+Security diligence is not complete.
+Customer concentration analysis is in progress.
+
+Open Items for Partner Meeting
+Need deeper renewal-risk analysis for top accounts.
+Need validation that expansion behavior is not concentrated in one buyer profile.
+Need legal view on code provenance and licensing before final term recommendation.

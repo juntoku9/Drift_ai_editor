@@ -1,0 +1,1 @@
+Load in app via: /api/demo?id=ai_travel_prd_realistic

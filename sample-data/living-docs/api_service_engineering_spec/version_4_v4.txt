@@ -1,0 +1,40 @@
+Scenario: API Service Engineering Spec
+Document title: Engineering Specification for Event Ingestion Service v2
+Version: V4
+Date: 2026-02-01
+Editor: Architecture Board
+Role: Core Platform Review
+Handle: @arb
+
+EVENT INGESTION SERVICE V2
+Engineering Specification
+Owners: Architecture Board with Platform Engineering, SRE, Security
+Status: Approved
+
+Final Objective
+Deliver high-throughput ingestion with reliable failure behavior and enterprise-grade security controls.
+
+Final Architecture
+Multi-AZ ingestion tier with asynchronous durability boundary.
+Idempotent write protocol and adaptive backpressure.
+Tenant-aware throttling, telemetry, and auditability.
+Integrated security controls at ingest edge.
+
+Rollout Plan
+Phase 1 shadow traffic.
+Phase 2 limited beta with top tenants.
+Phase 3 progressive GA after readiness criteria pass.
+
+Release Criteria
+Throughput target achieved without retry-storm patterns.
+p95 and p99 latency stable under chaos scenarios.
+Security and compliance checklist complete.
+Incident escalation and recovery process tested.
+
+Ownership
+Platform Engineering owns implementation and performance tuning.
+SRE owns readiness gates and incident drills.
+Security owns final control sign-off before GA.
+
+Final Note
+This approved version preserves original performance ambition while sequencing release around reliability and security reality.
