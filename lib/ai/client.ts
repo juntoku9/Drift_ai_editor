@@ -7,7 +7,7 @@ const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const MAX_MODEL_JSON_RETRIES = 1;
 const MAX_MODEL_OUTPUT_TOKENS = 64000;
 const MIN_TRANSITION_OUTPUT_TOKENS = 1200;
-const MAX_TRANSITION_OUTPUT_TOKENS = 4000;
+const MAX_TRANSITION_OUTPUT_TOKENS = 8000;
 const TRANSITION_CONCURRENCY = 4;
 
 interface TransitionFailureInfo {
@@ -526,6 +526,12 @@ async function callAnthropicTransition(args: {
       content?: Array<{ type?: string; text?: string }>;
       stop_reason?: string;
     };
+
+    // end_turn means the model hit max_tokens and the JSON is truncated — retry immediately
+    if (data.stop_reason === "end_turn") {
+      lastErr = `Invalid transition JSON (stop_reason=end_turn)`;
+      continue;
+    }
 
     const merged = (data.content ?? [])
       .filter((item) => item.type === "text" && typeof item.text === "string")
