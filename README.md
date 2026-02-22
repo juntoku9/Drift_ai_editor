@@ -28,6 +28,12 @@ Open a document, write your draft, and save a snapshot after each meaningful rev
 
 > **V1 → V5** in one view. Each contributor's avatar, role, and the specific semantic changes they introduced — raised commitments, removed scope, new legal requirements — all visible without opening a diff.
 
+### 1b. Review semantic diff with AI context
+
+Drift surfaces decision-level meaning changes across versions and keeps evidence visible so teams can understand impact fast.
+
+![Semantic diff view with AI context](assets/diffs_page.png)
+
 ---
 
 ### 2. See the full journey
