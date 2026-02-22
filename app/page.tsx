@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 import { AnalysisView } from "@/components/analysis-view";
 import { DocumentList } from "@/components/document-list";
@@ -25,7 +25,7 @@ import type {
 } from "@/lib/types";
 
 export default function HomePage() {
-  const { isLoaded, user } = useUser();
+  const authEnabled = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
   // Top-level navigation: null = library, string = open document
   const [activeDocId, setActiveDocId] = useState<string | null>(null);
@@ -327,12 +327,11 @@ export default function HomePage() {
       content: draftPlainText.trim(),
       richContent: draftHtml,
       source: "manual",
-      createdById: user?.id,
-      createdByName:
-        user?.fullName ?? user?.username ?? user?.primaryEmailAddress?.emailAddress ?? "Unknown",
+      createdById: undefined,
+      createdByName: "Unknown",
       createdByRole: "Editor",
-      createdByHandle: user?.username ? `@${user.username}` : undefined,
-      createdByAvatarUrl: user?.imageUrl
+      createdByHandle: undefined,
+      createdByAvatarUrl: undefined
     };
     const newSnapshots = [...snapshots, newSnapshot];
     setSnapshots(newSnapshots);
@@ -564,16 +563,20 @@ export default function HomePage() {
             </p>
           </div>
           <div className="flex items-center gap-2 pt-1">
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-            <SignedOut>
-              <SignInButton mode="modal">
-                <button className="rounded-full border border-ink/20 bg-white px-4 py-2 text-sm font-semibold hover:bg-ink/5">
-                  Sign in
-                </button>
-              </SignInButton>
-            </SignedOut>
+            {authEnabled ? (
+              <>
+                <SignedIn>
+                  <UserButton />
+                </SignedIn>
+                <SignedOut>
+                  <SignInButton mode="modal">
+                    <button className="rounded-full border border-ink/20 bg-white px-4 py-2 text-sm font-semibold hover:bg-ink/5">
+                      Sign in
+                    </button>
+                  </SignInButton>
+                </SignedOut>
+              </>
+            ) : null}
           </div>
         </header>
 
@@ -618,16 +621,20 @@ export default function HomePage() {
           >
             &larr; Library
           </button>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
-          <SignedOut>
-            <SignInButton mode="modal">
-              <button className="rounded-full border border-ink/20 bg-white px-4 py-2 text-sm font-semibold hover:bg-ink/5">
-                Sign in
-              </button>
-            </SignInButton>
-          </SignedOut>
+          {authEnabled ? (
+            <>
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button className="rounded-full border border-ink/20 bg-white px-4 py-2 text-sm font-semibold hover:bg-ink/5">
+                    Sign in
+                  </button>
+                </SignInButton>
+              </SignedOut>
+            </>
+          ) : null}
         </div>
       </header>
 

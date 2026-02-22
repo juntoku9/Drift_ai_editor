@@ -13,11 +13,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  const authEnabled = Boolean(clerkPublishableKey);
+
+  const content = (
+    <html lang="en">
+      <body className="font-sans antialiased">{children}</body>
+    </html>
+  );
+
+  if (!authEnabled) {
+    return content;
+  }
+
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className="font-sans antialiased">{children}</body>
-      </html>
+    <ClerkProvider publishableKey={clerkPublishableKey}>
+      {content}
     </ClerkProvider>
   );
 }
