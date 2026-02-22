@@ -14,21 +14,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-  const authEnabled = Boolean(clerkPublishableKey);
 
-  const content = (
+  const body = (
     <html lang="en">
       <body className="font-sans antialiased">{children}</body>
     </html>
   );
 
-  if (!authEnabled) {
-    return content;
+  // Always wrap with ClerkProvider when a key is present so that useUser()
+  // is never called outside a provider. When no key is configured the app
+  // runs without auth and useUser() returns { user: null }.
+  if (clerkPublishableKey) {
+    return <ClerkProvider publishableKey={clerkPublishableKey}>{body}</ClerkProvider>;
   }
 
-  return (
-    <ClerkProvider publishableKey={clerkPublishableKey}>
-      {content}
-    </ClerkProvider>
-  );
+  return body;
 }

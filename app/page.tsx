@@ -1,7 +1,13 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+
+const ClerkUserSync = dynamic(
+  () => import("@/components/clerk-user-sync").then((m) => m.ClerkUserSync),
+  { ssr: false }
+);
 
 import { AnalysisView } from "@/components/analysis-view";
 import { DocumentList } from "@/components/document-list";
@@ -26,7 +32,9 @@ import type {
 
 export default function HomePage() {
   const authEnabled = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
-  const { user } = useUser();
+  const [currentUser, setCurrentUser] = useState<{
+    id?: string; name?: string; avatarUrl?: string; handle?: string;
+  } | null>(null);
 
   // Top-level navigation: null = library, string = open document
   const [activeDocId, setActiveDocId] = useState<string | null>(null);
@@ -35,6 +43,7 @@ export default function HomePage() {
   const [migrationDone, setMigrationDone] = useState(false);
 
   // Document-level state
+  const [docCreatedAt, setDocCreatedAt] = useState<string>(new Date().toISOString());
   const [title, setTitle] = useState("Untitled Document");
   const [template, setTemplate] = useState<DomainTemplate>("product_spec");
   const [draftHtml, setDraftHtml] = useState("<p></p>");
@@ -61,8 +70,10 @@ export default function HomePage() {
   // Migration + load index on mount
   useEffect(() => {
     migrateFromV1();
-    setDocuments(listDocuments());
-    setMigrationDone(true);
+    void listDocuments().then((docs) => {
+      setDocuments(docs);
+      setMigrationDone(true);
+    });
   }, []);
 
   useEffect(() => {
@@ -86,21 +97,20 @@ export default function HomePage() {
 
   // Open a document by id
   const openDocument = useCallback((id: string) => {
-    const doc = loadDocument(id);
-    if (!doc) return;
     isLoadingDoc.current = true;
     setActiveDocId(id);
     setViewMode("editor");
-    setTitle(doc.title);
-    setTemplate(doc.template);
-    setDraftHtml(doc.draftHtml);
-    setDraftPlainText(doc.draftPlainText);
-    setSnapshots(doc.snapshots);
-    setAnalysis(doc.analysis);
     setError(null);
-    // Allow auto-save after next render
-    requestAnimationFrame(() => {
-      isLoadingDoc.current = false;
+    void loadDocument(id).then((doc) => {
+      if (!doc) { isLoadingDoc.current = false; return; }
+      setDocCreatedAt(doc.createdAt);
+      setTitle(doc.title);
+      setTemplate(doc.template);
+      setDraftHtml(doc.draftHtml);
+      setDraftPlainText(doc.draftPlainText);
+      setSnapshots(doc.snapshots);
+      setAnalysis(doc.analysis);
+      requestAnimationFrame(() => { isLoadingDoc.current = false; });
     });
   }, []);
 
@@ -108,8 +118,8 @@ export default function HomePage() {
   const goToLibrary = useCallback(() => {
     setActiveDocId(null);
     setViewMode("editor");
-    setDocuments(listDocuments());
     setError(null);
+    void listDocuments().then(setDocuments);
   }, []);
 
   // Auto-save active document when state changes
@@ -119,27 +129,28 @@ export default function HomePage() {
       id: activeDocId,
       title,
       template,
-      createdAt: loadDocument(activeDocId)?.createdAt ?? new Date().toISOString(),
+      createdAt: docCreatedAt,
       updatedAt: new Date().toISOString(),
       draftHtml,
       draftPlainText,
       snapshots,
       analysis,
     };
-    saveDocument(doc);
-  }, [activeDocId, title, template, draftHtml, draftPlainText, snapshots, analysis, migrationDone]);
+    void saveDocument(doc);
+  }, [activeDocId, docCreatedAt, title, template, draftHtml, draftPlainText, snapshots, analysis, migrationDone]);
 
   // Create a new document and open it
   function handleCreate() {
     const doc = createDocument();
-    saveDocument(doc);
+    setDocCreatedAt(doc.createdAt);
+    void saveDocument(doc);
     openDocument(doc.id);
   }
 
   // Delete a document from library
   function handleDelete(id: string) {
-    deleteDocument(id);
-    setDocuments(listDocuments());
+    setDocuments((prev) => prev.filter((d) => d.id !== id)); // optimistic
+    void deleteDocument(id);
   }
 
   function mapSnapshotsToVersions(input: EditorSnapshot[]): VersionInput[] {
@@ -274,7 +285,8 @@ export default function HomePage() {
         title: demo.title,
         template: demo.template ?? "product_spec",
       });
-      saveDocument(doc);
+      void saveDocument(doc);
+      setDocCreatedAt(doc.createdAt);
 
       // Open the new doc
       isLoadingDoc.current = true;
@@ -328,12 +340,11 @@ export default function HomePage() {
       content: draftPlainText.trim(),
       richContent: draftHtml,
       source: "manual",
-      createdById: user?.id,
-      createdByName:
-        user?.fullName ?? user?.username ?? user?.primaryEmailAddress?.emailAddress ?? "Unknown",
+      createdById: currentUser?.id,
+      createdByName: currentUser?.name ?? "Unknown",
       createdByRole: "Editor",
-      createdByHandle: user?.username ? `@${user.username}` : undefined,
-      createdByAvatarUrl: user?.imageUrl
+      createdByHandle: currentUser?.handle,
+      createdByAvatarUrl: currentUser?.avatarUrl
     };
     const newSnapshots = [...snapshots, newSnapshot];
     setSnapshots(newSnapshots);
@@ -557,6 +568,7 @@ export default function HomePage() {
   if (activeDocId === null) {
     return (
       <main className="mx-auto max-w-[1600px] px-4 py-6 md:px-8 md:py-10">
+        {authEnabled ? <ClerkUserSync onUser={setCurrentUser} /> : null}
         <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="font-[var(--font-serif)] text-5xl leading-none md:text-6xl">Drift</h1>
@@ -608,6 +620,7 @@ export default function HomePage() {
   // Document view
   return (
     <main className="mx-auto max-w-[1600px] px-4 py-6 md:px-8 md:py-10">
+      {authEnabled ? <ClerkUserSync onUser={setCurrentUser} /> : null}
       <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="font-[var(--font-serif)] text-5xl leading-none md:text-6xl">Drift</h1>
