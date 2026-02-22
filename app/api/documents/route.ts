@@ -84,6 +84,19 @@ export async function POST(request: Request) {
         createdAt: body.createdAt,
         updatedAt: body.updatedAt,
       })
+      .onConflictDoUpdate({
+        target: documents.id,
+        set: {
+          userId: DEMO_WORKSPACE_ID,
+          title: body.title,
+          template: body.template,
+          draftHtml: body.draftHtml,
+          draftPlainText: body.draftPlainText,
+          snapshots: body.snapshots,
+          analysis: body.analysis,
+          updatedAt: body.updatedAt,
+        }
+      })
       .returning();
     return NextResponse.json(row);
   } catch (err) {
