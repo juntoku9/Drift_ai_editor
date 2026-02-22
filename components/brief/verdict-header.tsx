@@ -39,7 +39,7 @@ export function VerdictHeader({ title, headline, driftScore, synthesisPending, o
           <div className="h-7 w-1/2 rounded-lg bg-ink/8" />
         </div>
       ) : (
-        <h2 className="font-[var(--font-serif)] text-2xl leading-snug md:text-3xl">
+        <h2 className="whitespace-pre-line font-[var(--font-serif)] text-2xl leading-snug md:text-3xl">
           {headline}
         </h2>
       )}

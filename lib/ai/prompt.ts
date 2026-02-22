@@ -55,7 +55,7 @@ Respond with STRICT JSON only matching this exact shape:
   "narrative": "one concise paragraph",
   "inflection_point": "Vx -> Vy",
   "drift_score": 0,
-  "headline": "one plain-English sentence summarizing the key finding",
+  "headline": "- bullet 1\\n- bullet 2\\n- bullet 3",
   "recommended_action": "1-2 sentence concrete next step naming who should do what"
 }
 
@@ -66,6 +66,7 @@ Rules:
 - Keep explanations direct and decision-oriented.
 - Prefer 6-12 drifts across full sequence unless transitions are truly stable.
 - narrative must answer: what changed in decision meaning, why it matters, who must align next.
+- headline must be 2-3 short bullet points using '-' prefix, each under 12 words, concrete and non-generic.
 - Return only JSON, no markdown, no extra keys.`;
 
 export function buildUserPrompt(input: AnalyzeRequest): string {
@@ -156,13 +157,15 @@ Given a structured list of semantic drifts found across document versions, synth
 
 Return STRICT JSON only:
 {
-  "headline": "one specific sentence naming the most significant decision change",
+  "headline": "- bullet 1\\n- bullet 2\\n- bullet 3",
   "narrative": "one paragraph: what changed in decision meaning, why it matters, who must align next",
   "recommended_action": "1-2 sentences: concrete next step naming a specific role or person and action"
 }
 
 Rules:
-- headline must name the specific element that shifted (e.g. "Q1 launch commitment softened to conditional target" — never generic like "significant drift detected")
+- headline must be 2-3 concise bullet points using '-' prefix and newline separators.
+- each headline bullet must be concrete, specific, and under 12 words.
+- headline bullets must name specific shifted elements (e.g. launch commitment, liability cap, ownership gate), never generic statements.
 - narrative must answer three things: what changed in decision meaning, why it matters to execution, who must align before proceeding
 - recommended_action must name a specific role or person and a specific action, not a generic "review"
 - Return only JSON, no markdown, no extra keys.`;

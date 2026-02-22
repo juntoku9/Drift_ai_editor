@@ -457,7 +457,7 @@ export function EditorPanel({
               <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-ember/70">
                 Key Finding
               </p>
-              <p className="text-sm font-semibold leading-snug text-ink/85">
+              <p className="whitespace-pre-line text-sm font-semibold leading-snug text-ink/85">
                 {analysis.headline}
               </p>
             </div>

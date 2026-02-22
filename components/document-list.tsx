@@ -225,7 +225,7 @@ export function DocumentList({
                 ) : null}
 
                 {doc.headline ? (
-                  <p className="mb-2 line-clamp-2 text-sm leading-relaxed text-ink/70">
+                  <p className="mb-2 line-clamp-3 whitespace-pre-line text-sm leading-relaxed text-ink/70">
                     {doc.headline}
                   </p>
                 ) : null}
