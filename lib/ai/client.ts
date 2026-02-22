@@ -7,7 +7,7 @@ const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const MAX_MODEL_JSON_RETRIES = 1;
 const MAX_MODEL_OUTPUT_TOKENS = 64000;
 const MIN_TRANSITION_OUTPUT_TOKENS = 1200;
-const MAX_TRANSITION_OUTPUT_TOKENS = 8000;
+const MAX_TRANSITION_OUTPUT_TOKENS = 64000;
 const TRANSITION_CONCURRENCY = 4;
 
 interface TransitionFailureInfo {
