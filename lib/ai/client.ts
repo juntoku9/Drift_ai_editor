@@ -4,7 +4,7 @@ import type { AnalyzeRequest, AnalysisResult, DriftItem, TransitionSummary, Vers
 import { getTemplateLabel } from "@/lib/templates";
 
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
-const MAX_MODEL_JSON_RETRIES = 1;
+const MAX_MODEL_JSON_RETRIES = 3;
 const MAX_MODEL_OUTPUT_TOKENS = 64000;
 const MIN_TRANSITION_OUTPUT_TOKENS = 1200;
 const MAX_TRANSITION_OUTPUT_TOKENS = 64000;
@@ -527,9 +527,9 @@ async function callAnthropicTransition(args: {
       stop_reason?: string;
     };
 
-    // end_turn means the model hit max_tokens and the JSON is truncated — retry immediately
-    if (data.stop_reason === "end_turn") {
-      lastErr = `Invalid transition JSON (stop_reason=end_turn)`;
+    // Anthropic uses max_tokens when output is truncated.
+    if (data.stop_reason === "max_tokens") {
+      lastErr = "Transition output was truncated (stop_reason=max_tokens).";
       continue;
     }
 
@@ -710,39 +710,21 @@ async function analyzeWithTransitionCalls(input: AnalyzeRequest, apiKey: string,
   const t0Transitions = Date.now();
   const transitionResults = await mapWithConcurrency(transitions, TRANSITION_CONCURRENCY, async (pair) => {
     const t0 = Date.now();
-    try {
-      const result = await callAnthropicTransition({
-        key: apiKey,
-        model,
-        title: input.title,
-        template: input.template,
-        from: pair.from,
-        to: pair.to
-      });
-      console.info("[drift.timing] transition", `${pair.from.version}→${pair.to.version}`, `${Date.now() - t0}ms`);
-      return {
-        ...result,
-        model_failed: false as const,
-        warning: null as string | null,
-        failure: null as TransitionFailureInfo | null
-      };
-    } catch (error) {
-      console.info("[drift.timing] transition", `${pair.from.version}→${pair.to.version}`, `${Date.now() - t0}ms`, "fallback");
-      const reason = compactErrorDetail(summarizeError(error));
-      const fallback = heuristicTransition(pair.from, pair.to);
-      const failure: TransitionFailureInfo = {
-        from_version: pair.from.version,
-        to_version: pair.to.version,
-        reason
-      };
-      console.warn("[drift.analyze.transition] fallback", failure);
-      return {
-        ...fallback,
-        model_failed: true as const,
-        warning: `Transition ${pair.from.version} -> ${pair.to.version} used fallback analysis (${reason}).`,
-        failure
-      };
-    }
+    const result = await callAnthropicTransition({
+      key: apiKey,
+      model,
+      title: input.title,
+      template: input.template,
+      from: pair.from,
+      to: pair.to
+    });
+    console.info("[drift.timing] transition", `${pair.from.version}→${pair.to.version}`, `${Date.now() - t0}ms`);
+    return {
+      ...result,
+      model_failed: false as const,
+      warning: null as string | null,
+      failure: null as TransitionFailureInfo | null
+    };
   });
   console.info("[drift.timing] transitions_phase", `${Date.now() - t0Transitions}ms`);
 
@@ -779,22 +761,15 @@ async function analyzeWithTransitionCalls(input: AnalyzeRequest, apiKey: string,
   };
   if (!opts.skipSynthesis && allDrifts.length > 0) {
     const t0Synthesis = Date.now();
-    try {
-      synthesis = await callAnthropicSynthesis({
-        key: apiKey,
-        model,
-        title: input.title,
-        template: input.template,
-        versions: input.versions,
-        drifts: allDrifts
-      });
-      console.info("[drift.timing] synthesis", `${Date.now() - t0Synthesis}ms`);
-    } catch (error) {
-      console.info("[drift.timing] synthesis", `${Date.now() - t0Synthesis}ms`, "fallback");
-      const reason = compactErrorDetail(summarizeError(error));
-      synthesisWarnings.push(`Synthesis used template fallback (${reason}).`);
-      console.warn("[drift.synthesis] fallback", reason);
-    }
+    synthesis = await callAnthropicSynthesis({
+      key: apiKey,
+      model,
+      title: input.title,
+      template: input.template,
+      versions: input.versions,
+      drifts: allDrifts
+    });
+    console.info("[drift.timing] synthesis", `${Date.now() - t0Synthesis}ms`);
   }
 
   const result: AnalysisResult = {
@@ -871,42 +846,16 @@ function buildHeuristicAnalysis(versions: VersionInput[], template: AnalyzeReque
 
 export async function analyzeDocument(input: AnalyzeRequest): Promise<AnalysisResult> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    const allowMock = process.env.ALLOW_MOCK_ANALYSIS === "true";
-    if (!allowMock) throw new Error("ANTHROPIC_API_KEY is not configured.");
-    return buildHeuristicAnalysis(input.versions, input.template);
-  }
-
-  try {
-    return await analyzeWithTransitionCalls(input, apiKey);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown analysis error.";
-    if (/max_tokens|Invalid|parse|schema|missing text|429|rate/i.test(message)) {
-      return buildHeuristicAnalysis(input.versions, input.template);
-    }
-    throw error;
-  }
+  if (!apiKey) throw new Error("ANTHROPIC_API_KEY is not configured.");
+  return analyzeWithTransitionCalls(input, apiKey);
 }
 
 /** Transitions only — runs parallel drift calls, skips the synthesis step.
  *  Use when the client will call /api/analyze/synthesis separately. */
 export async function analyzeTransitions(input: AnalyzeRequest): Promise<AnalysisResult> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    const allowMock = process.env.ALLOW_MOCK_ANALYSIS === "true";
-    if (!allowMock) throw new Error("ANTHROPIC_API_KEY is not configured.");
-    return buildHeuristicAnalysis(input.versions, input.template);
-  }
-
-  try {
-    return await analyzeWithTransitionCalls(input, apiKey, { skipSynthesis: true });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown analysis error.";
-    if (/max_tokens|Invalid|parse|schema|missing text|429|rate/i.test(message)) {
-      return buildHeuristicAnalysis(input.versions, input.template);
-    }
-    throw error;
-  }
+  if (!apiKey) throw new Error("ANTHROPIC_API_KEY is not configured.");
+  return analyzeWithTransitionCalls(input, apiKey, { skipSynthesis: true });
 }
 
 /** Synthesis only — takes already-computed drifts and generates headline / narrative / action. */
