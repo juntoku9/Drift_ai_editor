@@ -16,6 +16,55 @@ export const analyzeRequestSchema = z.object({
   versions: z.array(versionInputSchema).min(2).max(10)
 });
 
+export const driftItemSchema = z.object({
+  id: z.string(),
+  element: z.string(),
+  type: z.enum(["strengthened", "weakened", "shifted", "appeared", "disappeared"]),
+  decision_axis: z
+    .enum(["timeline", "scope", "obligation", "risk", "ownership", "compliance", "economics"])
+    .default("scope"),
+  strength_delta: z.number().int().min(-2).max(2).default(0),
+  reversibility: z.enum(["easy", "medium", "hard"]).default("medium"),
+  blast_radius: z.enum(["team", "org", "external"]).default("team"),
+  confidence: z.number().min(0).max(1).default(0.6),
+  evidence_quality: z.enum(["direct", "inferred"]).default("direct"),
+  from_version: z.string(),
+  to_version: z.string(),
+  from_text: z.string(),
+  to_text: z.string(),
+  significance: z.enum(["low", "medium", "high"]),
+  explanation: z.string(),
+  question_to_ask: z.string()
+});
+
+export const transitionSummarySchema = z.object({
+  from_version: z.string(),
+  to_version: z.string(),
+  summary: z.string(),
+  primary_owner: z.string(),
+  no_material_drift: z.boolean()
+});
+
+// Lean schema for per-transition calls.
+// from_version/to_version are omitted — model often skips them as redundant with the outer
+// wrapper, and they are assigned from context after parsing.
+const transitionDriftSchema = z.object({
+  id: z.string(),
+  element: z.string(),
+  type: z.enum(["strengthened", "weakened", "shifted", "appeared", "disappeared"]),
+  from_text: z.string(),
+  to_text: z.string(),
+  significance: z.enum(["low", "medium", "high"]),
+  explanation: z.string(),
+  question_to_ask: z.string()
+});
+
+export const transitionAnalysisSchema = z.object({
+  from_version: z.string(),
+  to_version: z.string(),
+  drifts: z.array(transitionDriftSchema)
+});
+
 export const analysisResponseSchema = z.object({
   versions: z.array(
     z.object({
@@ -30,49 +79,34 @@ export const analysisResponseSchema = z.object({
       })
     })
   ),
-  drifts: z.array(
-    z.object({
-      id: z.string(),
-      element: z.string(),
-      type: z.enum([
-        "strengthened",
-        "weakened",
-        "shifted",
-        "appeared",
-        "disappeared"
-      ]),
-      decision_axis: z
-        .enum(["timeline", "scope", "obligation", "risk", "ownership", "compliance", "economics"])
-        .default("scope"),
-      strength_delta: z.number().int().min(-2).max(2).default(0),
-      reversibility: z.enum(["easy", "medium", "hard"]).default("medium"),
-      blast_radius: z.enum(["team", "org", "external"]).default("team"),
-      confidence: z.number().min(0).max(1).default(0.6),
-      evidence_quality: z.enum(["direct", "inferred"]).default("direct"),
-      from_version: z.string(),
-      to_version: z.string(),
-      from_text: z.string(),
-      to_text: z.string(),
-      significance: z.enum(["low", "medium", "high"]),
-      explanation: z.string(),
-      question_to_ask: z.string()
+  drifts: z.array(driftItemSchema),
+  transition_summaries: z.array(transitionSummarySchema).default([]),
+  diagnostics: z
+    .object({
+      fallback_used: z.boolean(),
+      transition_model_failures: z.number().int().min(0),
+      warnings: z.array(z.string()),
+      transition_errors: z
+        .array(
+          z.object({
+            from_version: z.string(),
+            to_version: z.string(),
+            reason: z.string()
+          })
+        )
+        .optional()
     })
-  ),
-  transition_summaries: z
-    .array(
-      z.object({
-        from_version: z.string(),
-        to_version: z.string(),
-        summary: z.string(),
-        primary_owner: z.string(),
-        no_material_drift: z.boolean()
-      })
-    )
-    .default([]),
+    .optional(),
   narrative: z.string(),
   inflection_point: z.string(),
   drift_score: z.number().int().min(0).max(100),
   headline: z.string(),
+  recommended_action: z.string()
+});
+
+export const synthesisSchema = z.object({
+  headline: z.string(),
+  narrative: z.string(),
   recommended_action: z.string()
 });
 

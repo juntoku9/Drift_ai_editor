@@ -4,6 +4,7 @@ interface VerdictHeaderProps {
   title: string;
   headline: string;
   driftScore: number;
+  synthesisPending?: boolean;
   onBack: () => void;
   onBackToLibrary?: () => void;
 }
@@ -14,7 +15,7 @@ function severityDots(score: number): { filled: number; label: string; color: st
   return { filled: 2, label: "Low drift", color: "bg-olive" };
 }
 
-export function VerdictHeader({ title, headline, driftScore, onBack, onBackToLibrary }: VerdictHeaderProps) {
+export function VerdictHeader({ title, headline, driftScore, synthesisPending, onBack, onBackToLibrary }: VerdictHeaderProps) {
   const severity = severityDots(driftScore);
 
   return (
@@ -32,9 +33,16 @@ export function VerdictHeader({ title, headline, driftScore, onBack, onBackToLib
         </button>
       </div>
 
-      <h2 className="font-[var(--font-serif)] text-2xl leading-snug md:text-3xl">
-        {headline}
-      </h2>
+      {synthesisPending ? (
+        <div className="space-y-2 animate-pulse">
+          <div className="h-7 w-3/4 rounded-lg bg-ink/10" />
+          <div className="h-7 w-1/2 rounded-lg bg-ink/8" />
+        </div>
+      ) : (
+        <h2 className="font-[var(--font-serif)] text-2xl leading-snug md:text-3xl">
+          {headline}
+        </h2>
+      )}
 
       <div className="flex items-center gap-2">
         <div className="flex gap-1">

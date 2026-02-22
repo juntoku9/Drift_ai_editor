@@ -75,10 +75,22 @@ export interface TransitionSummary {
   no_material_drift: boolean;
 }
 
+export interface AnalysisDiagnostics {
+  fallback_used: boolean;
+  transition_model_failures: number;
+  warnings: string[];
+  transition_errors?: Array<{
+    from_version: string;
+    to_version: string;
+    reason: string;
+  }>;
+}
+
 export interface AnalysisResult {
   versions: SemanticVersion[];
   drifts: DriftItem[];
   transition_summaries?: TransitionSummary[];
+  diagnostics?: AnalysisDiagnostics;
   narrative: string;
   inflection_point: string;
   drift_score: number;

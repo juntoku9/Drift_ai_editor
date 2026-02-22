@@ -10,6 +10,20 @@ const config: Config = {
         ember: "#b04624",
         olive: "#667a57",
         slate: "#364153"
+      },
+      keyframes: {
+        "toast-in": {
+          "0%": { opacity: "0", transform: "translateX(-50%) translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateX(-50%) translateY(0)" }
+        },
+        "toast-out": {
+          "0%": { opacity: "1", transform: "translateX(-50%) translateY(0)" },
+          "100%": { opacity: "0", transform: "translateX(-50%) translateY(-6px)" }
+        }
+      },
+      animation: {
+        "toast-in": "toast-in 0.2s ease forwards",
+        "toast-out": "toast-out 0.35s ease forwards"
       }
     }
   },

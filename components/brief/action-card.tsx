@@ -5,6 +5,7 @@ import { useState } from "react";
 interface ActionCardProps {
   recommendedAction: string;
   narrative?: string;
+  synthesisPending?: boolean;
 }
 
 /** Split a recommended-action string into bullet-worthy chunks.
@@ -20,7 +21,7 @@ function splitAction(text: string): string[] {
   return [text];
 }
 
-export function ActionCard({ recommendedAction, narrative }: ActionCardProps) {
+export function ActionCard({ recommendedAction, narrative, synthesisPending }: ActionCardProps) {
   const [showNarrative, setShowNarrative] = useState(false);
 
   return (
@@ -29,14 +30,22 @@ export function ActionCard({ recommendedAction, narrative }: ActionCardProps) {
         Recommended Next Step
       </p>
 
-      <ul className="mt-3 space-y-2">
-        {splitAction(recommendedAction).map((item, i) => (
-          <li key={i} className="flex gap-2.5 text-base font-semibold leading-relaxed md:text-lg">
-            <span className="mt-[0.35em] h-1.5 w-1.5 shrink-0 rounded-full bg-white/40" />
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
+      {synthesisPending ? (
+        <div className="mt-3 space-y-2 animate-pulse">
+          <div className="h-5 w-full rounded bg-white/10" />
+          <div className="h-5 w-4/5 rounded bg-white/10" />
+          <div className="h-5 w-2/3 rounded bg-white/10" />
+        </div>
+      ) : (
+        <ul className="mt-3 space-y-2">
+          {splitAction(recommendedAction).map((item, i) => (
+            <li key={i} className="flex gap-2.5 text-base font-semibold leading-relaxed md:text-lg">
+              <span className="mt-[0.35em] h-1.5 w-1.5 shrink-0 rounded-full bg-white/40" />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      )}
 
       {narrative ? (
         <div className="mt-4">

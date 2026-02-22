@@ -11,17 +11,23 @@ interface EditorPanelProps {
   draftPlainText: string;
   snapshots: EditorSnapshot[];
   loading: boolean;
+  analyzingMessage?: string | null;
+  autoAnalyzing?: boolean;
+  synthesisPending?: boolean;
+  autoAnalyzeEnabled?: boolean;
   hasInsights?: boolean;
   analysis?: AnalysisResult | null;
   onTitleChange: (value: string) => void;
   onTemplateChange: (value: DomainTemplate) => void;
   onDraftChange: (html: string, plainText: string) => void;
   onSaveSnapshot: () => void;
-  onAnalyze: () => void;
   onLoadSnapshot: (id: string) => void;
   onDeleteSnapshot: (id: string) => void;
   onInsights?: () => void;
   onBackToLibrary?: () => void;
+  onReanalyze?: () => void;
+  onToggleAutoAnalyze?: () => void;
+  onClearAnalysis?: () => void;
 }
 
 // ── Constants ──────────────────────────────────────────────────────────────────
@@ -215,17 +221,23 @@ export function EditorPanel({
   draftPlainText,
   snapshots,
   loading,
+  analyzingMessage,
+  autoAnalyzing,
+  synthesisPending,
+  autoAnalyzeEnabled = true,
   hasInsights,
   analysis,
   onTitleChange,
   onTemplateChange,
   onDraftChange,
   onSaveSnapshot,
-  onAnalyze,
   onLoadSnapshot,
   onDeleteSnapshot,
   onInsights,
   onBackToLibrary,
+  onReanalyze,
+  onToggleAutoAnalyze,
+  onClearAnalysis,
 }: EditorPanelProps) {
   const canAnalyze = snapshots.length >= 2;
 
@@ -323,16 +335,13 @@ export function EditorPanel({
               >
                 Save Snapshot
               </button>
-              <button
-                type="button"
-                onClick={onAnalyze}
-                disabled={loading || !canAnalyze}
-                title={!canAnalyze ? "Save at least 2 snapshots first" : undefined}
-                className="rounded-full bg-ember px-4 py-2 text-sm font-semibold text-white hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                {loading ? "Analyzing…" : "Analyze Drift"}
-              </button>
             </div>
+            {loading && analyzingMessage ? (
+              <div className="mb-3 rounded-xl border border-amber-300/40 bg-amber-50/70 px-3 py-2">
+                <p className="text-xs font-semibold text-amber-800/90">Analysis in progress</p>
+                <p className="mt-0.5 text-xs text-amber-700/80">{analyzingMessage}</p>
+              </div>
+            ) : null}
             <RichTextEditor
               value={draftHtml}
               onChange={onDraftChange}
@@ -345,7 +354,58 @@ export function EditorPanel({
         <aside className="panel sticky top-6 h-fit space-y-5 p-5 md:p-6">
 
           {/* ── Headline insight (post-analysis) ── */}
-          {analysis?.headline && (
+          {analysis?.diagnostics?.transition_model_failures ? (
+            <div className="rounded-xl border border-red-300/40 bg-red-50/70 px-4 py-3">
+              <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-red-700">
+                Analysis Warning
+              </p>
+              <p className="text-sm font-semibold leading-snug text-red-900/90">
+                {analysis.diagnostics.transition_model_failures} transition
+                {analysis.diagnostics.transition_model_failures > 1 ? "s" : ""} used fallback
+                analysis.
+              </p>
+              {analysis.diagnostics.transition_errors?.length ? (
+                <div className="mt-2 space-y-1">
+                  {analysis.diagnostics.transition_errors.map((entry) => (
+                    <p key={`${entry.from_version}-${entry.to_version}`} className="text-xs text-red-800/85">
+                      {entry.from_version} -&gt; {entry.to_version}: {entry.reason}
+                    </p>
+                  ))}
+                </div>
+              ) : analysis.diagnostics.warnings?.length ? (
+                <div className="mt-2 space-y-1">
+                  {analysis.diagnostics.warnings.slice(0, 3).map((warning, idx) => (
+                    <p key={idx} className="text-xs text-red-800/80">
+                      {warning}
+                    </p>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          {/* ── Key Finding / analysis status ── */}
+          {autoAnalyzing && !analysis ? (
+            <div className="rounded-xl border border-ink/10 bg-ink/[0.03] px-4 py-3">
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/40">
+                Analyzing
+              </p>
+              <div className="space-y-2 animate-pulse">
+                <div className="h-3.5 w-full rounded bg-ink/10" />
+                <div className="h-3.5 w-4/5 rounded bg-ink/8" />
+              </div>
+            </div>
+          ) : synthesisPending && analysis ? (
+            <div className="rounded-xl border border-ember/20 bg-ember/[0.06] px-4 py-3">
+              <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-ember/70">
+                Key Finding
+              </p>
+              <div className="space-y-1.5 animate-pulse">
+                <div className="h-3.5 w-full rounded bg-ember/15" />
+                <div className="h-3.5 w-3/4 rounded bg-ember/10" />
+              </div>
+            </div>
+          ) : analysis?.headline ? (
             <div className="rounded-xl border border-ember/20 bg-ember/[0.06] px-4 py-3">
               <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-ember/70">
                 Key Finding
@@ -354,19 +414,13 @@ export function EditorPanel({
                 {analysis.headline}
               </p>
             </div>
-          )}
-
-          {/* ── Pre-analysis nudge (before analysis, ≥2 snapshots) ── */}
-          {!analysis && snapshots.length >= 2 && (
-            <div className="rounded-xl border border-dashed border-amber-400/40 bg-amber-50/60 px-4 py-3">
-              <p className="text-sm font-semibold text-amber-800/80">
-                {snapshots.length} versions saved
-              </p>
-              <p className="mt-0.5 text-xs text-amber-700/60">
-                Run Analyze Drift to reveal how meaning changed across versions.
+          ) : snapshots.length === 1 ? (
+            <div className="rounded-xl border border-dashed border-ink/15 px-4 py-3">
+              <p className="text-sm text-ink/50">
+                Save one more snapshot to start live analysis.
               </p>
             </div>
-          )}
+          ) : null}
 
           {/* ── Version history ── */}
           <div>
@@ -475,8 +529,20 @@ export function EditorPanel({
           </div>
 
           {/* Drift score gauge */}
-          {analysis && (
-            <div className="rounded-xl bg-ink/[0.03] px-4 py-3">
+          {autoAnalyzing && !analysis ? (
+            <div className="rounded-xl bg-ink/[0.03] px-4 py-3 animate-pulse">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-ink/40">
+                  Drift Score
+                </span>
+                <div className="h-5 w-8 rounded bg-ink/10" />
+              </div>
+              <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-ink/[0.06]">
+                <div className="h-full w-1/3 rounded-full bg-ink/10" />
+              </div>
+            </div>
+          ) : analysis ? (
+            <div className={`rounded-xl bg-ink/[0.03] px-4 py-3 transition-opacity ${autoAnalyzing ? "opacity-50" : ""}`}>
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-ink/40">
                   Drift Score
@@ -487,7 +553,7 @@ export function EditorPanel({
               </div>
               <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-ink/[0.06]">
                 <div
-                  className={`h-full rounded-full ${
+                  className={`h-full rounded-full transition-all duration-700 ${
                     analysis.drift_score >= 66
                       ? "bg-ember"
                       : analysis.drift_score >= 36
@@ -498,10 +564,20 @@ export function EditorPanel({
                 />
               </div>
             </div>
-          )}
+          ) : null}
 
           {/* Recommended action */}
-          {analysis?.recommended_action && (
+          {synthesisPending && analysis ? (
+            <div className="rounded-xl border border-ink/10 bg-ink/[0.02] px-4 py-3 animate-pulse">
+              <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/40">
+                Next Step
+              </p>
+              <div className="space-y-1.5">
+                <div className="h-3 w-full rounded bg-ink/8" />
+                <div className="h-3 w-4/5 rounded bg-ink/6" />
+              </div>
+            </div>
+          ) : analysis?.recommended_action ? (
             <div className="rounded-xl border border-ink/10 bg-ink/[0.02] px-4 py-3">
               <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/40">
                 Next Step
@@ -519,7 +595,64 @@ export function EditorPanel({
                 </button>
               )}
             </div>
-          )}
+          ) : null}
+
+          {/* ── Analysis controls ── */}
+          <div className="border-t border-ink/8 pt-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-ink/35">
+                Analysis
+              </p>
+              <div className="flex items-center gap-1.5">
+                {analysis && onClearAnalysis ? (
+                  <button
+                    type="button"
+                    onClick={onClearAnalysis}
+                    className="rounded-full px-2.5 py-1 text-[11px] font-medium text-ink/35 hover:bg-ink/5 hover:text-ink/60"
+                  >
+                    Clear
+                  </button>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={onReanalyze}
+                  disabled={autoAnalyzing || snapshots.length < 2}
+                  className="flex items-center gap-1 rounded-full border border-ink/15 px-2.5 py-1 text-[11px] font-semibold text-ink/50 hover:border-ink/30 hover:text-ink disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none" className={autoAnalyzing ? "animate-spin" : ""}>
+                    <path d="M10.5 6A4.5 4.5 0 1 1 6 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    <path d="M10.5 1.5v3h-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  {autoAnalyzing ? "Running…" : "Re-run"}
+                </button>
+              </div>
+            </div>
+
+            {/* Auto-analyze toggle */}
+            <button
+              type="button"
+              onClick={onToggleAutoAnalyze}
+              className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 hover:bg-ink/[0.03] transition-colors"
+            >
+              <div className="text-left">
+                <span className="block text-xs font-medium text-ink/70">Auto-analyze on save</span>
+                <span className="block text-[11px] text-ink/40">
+                  {autoAnalyzeEnabled ? "Runs after each snapshot" : "Manual only"}
+                </span>
+              </div>
+              <span
+                className={`flex h-5 w-9 shrink-0 items-center rounded-full p-0.5 transition-colors ${
+                  autoAnalyzeEnabled ? "bg-ink" : "bg-ink/20"
+                }`}
+              >
+                <span
+                  className={`h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
+                    autoAnalyzeEnabled ? "translate-x-4" : "translate-x-0"
+                  }`}
+                />
+              </span>
+            </button>
+          </div>
         </aside>
       </div>
     </section>

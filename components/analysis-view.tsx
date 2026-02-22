@@ -13,6 +13,7 @@ interface AnalysisViewProps {
   title: string;
   analysis: AnalysisResult;
   snapshots: EditorSnapshot[];
+  synthesisPending?: boolean;
   onBack: () => void;
   onBackToLibrary?: () => void;
   transitionActors?: Record<
@@ -34,6 +35,7 @@ export function AnalysisView({
   title,
   analysis,
   snapshots,
+  synthesisPending,
   onBack,
   onBackToLibrary,
   transitionActors
@@ -113,6 +115,7 @@ export function AnalysisView({
         title={title}
         headline={analysis.headline}
         driftScore={analysis.drift_score}
+        synthesisPending={synthesisPending}
         onBack={onBack}
         onBackToLibrary={onBackToLibrary}
       />
@@ -145,6 +148,7 @@ export function AnalysisView({
       <ActionCard
         recommendedAction={analysis.recommended_action}
         narrative={analysis.narrative}
+        synthesisPending={synthesisPending}
       />
     </section>
   );

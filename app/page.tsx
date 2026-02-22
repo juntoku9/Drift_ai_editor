@@ -40,14 +40,22 @@ export default function HomePage() {
   const [draftPlainText, setDraftPlainText] = useState("");
   const [snapshots, setSnapshots] = useState<EditorSnapshot[]>([]);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
+  const [synthesisPending, setSynthesisPending] = useState(false);
+  const [autoAnalyzing, setAutoAnalyzing] = useState(false);
+  const [autoAnalyzeEnabled, setAutoAnalyzeEnabled] = useState(true);
+  const [toast, setToast] = useState<{ message: string; done: boolean; mountKey: number } | null>(null);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [analysisProgress, setAnalysisProgress] = useState<string | null>(null);
   const [demoCatalog, setDemoCatalog] = useState<Array<{ id: string; name: string }>>([]);
 
   const canAnalyze = useMemo(() => snapshots.length >= 2, [snapshots]);
 
   // Ref to track whether we're currently loading a doc (skip auto-save during load)
   const isLoadingDoc = useRef(false);
+  const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const autoAnalysisAbortRef = useRef<AbortController | null>(null);
 
   // Migration + load index on mount
   useEffect(() => {
@@ -175,7 +183,24 @@ export default function HomePage() {
   async function analyze(payload: { title: string; template: DomainTemplate; versions: VersionInput[] }) {
     setLoading(true);
     setError(null);
+    setAnalysis(null);
+    setSynthesisPending(false);
+    const transitions = Math.max(1, payload.versions.length - 1);
+    const phases = [
+      `Preparing ${transitions} transition${transitions > 1 ? "s" : ""}...`,
+      `Analyzing transitions in parallel (${transitions})...`,
+      "Detecting semantic drift...",
+      "Building timeline..."
+    ];
+    let phaseIndex = 0;
+    setAnalysisProgress(phases[phaseIndex]);
+    if (progressTimerRef.current) clearInterval(progressTimerRef.current);
+    progressTimerRef.current = setInterval(() => {
+      phaseIndex = (phaseIndex + 1) % phases.length;
+      setAnalysisProgress(phases[phaseIndex]);
+    }, 1800);
     try {
+      // Phase 1: transitions only — navigate to insights as soon as drifts arrive
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -187,9 +212,47 @@ export default function HomePage() {
       }
       setAnalysis(data);
       setViewMode("insights");
+      setLoading(false);
+      if (progressTimerRef.current) {
+        clearInterval(progressTimerRef.current);
+        progressTimerRef.current = null;
+      }
+      setAnalysisProgress(null);
+
+      // Phase 2: synthesis — fills in headline / narrative / recommended_action
+      setSynthesisPending(true);
+      try {
+        const synthVersions = payload.versions.map((v, i) => ({
+          version: `V${i + 1}`,
+          author_name: v.author_name,
+          author_role: v.author_role
+        }));
+        const synthResponse = await fetch("/api/analyze/synthesis", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: payload.title,
+            template: payload.template,
+            versions: synthVersions,
+            drifts: data.drifts
+          })
+        });
+        if (synthResponse.ok) {
+          const synthData = await synthResponse.json();
+          setAnalysis((prev) =>
+            prev ? { ...prev, ...synthData } : prev
+          );
+        }
+      } finally {
+        setSynthesisPending(false);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error.");
-    } finally {
+      if (progressTimerRef.current) {
+        clearInterval(progressTimerRef.current);
+        progressTimerRef.current = null;
+      }
+      setAnalysisProgress(null);
       setLoading(false);
     }
   }
@@ -257,23 +320,211 @@ export default function HomePage() {
       return;
     }
     setError(null);
-    setSnapshots((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        label: `(manual ${prev.length + 1})`,
-        timestamp: new Date().toISOString(),
-        content: draftPlainText.trim(),
-        richContent: draftHtml,
-        source: "manual",
-        createdById: user?.id,
-        createdByName:
-          user?.fullName ?? user?.username ?? user?.primaryEmailAddress?.emailAddress ?? "Unknown",
-        createdByRole: "Editor",
-        createdByHandle: user?.username ? `@${user.username}` : undefined,
-        createdByAvatarUrl: user?.imageUrl
+    const newSnapshot: EditorSnapshot = {
+      id: crypto.randomUUID(),
+      label: `(manual ${snapshots.length + 1})`,
+      timestamp: new Date().toISOString(),
+      content: draftPlainText.trim(),
+      richContent: draftHtml,
+      source: "manual",
+      createdById: user?.id,
+      createdByName:
+        user?.fullName ?? user?.username ?? user?.primaryEmailAddress?.emailAddress ?? "Unknown",
+      createdByRole: "Editor",
+      createdByHandle: user?.username ? `@${user.username}` : undefined,
+      createdByAvatarUrl: user?.imageUrl
+    };
+    const newSnapshots = [...snapshots, newSnapshot];
+    setSnapshots(newSnapshots);
+    if (newSnapshots.length >= 2 && autoAnalyzeEnabled) {
+      void autoAnalyze(newSnapshots);
+    }
+  }
+
+  async function autoAnalyze(currentSnapshots: EditorSnapshot[], forceFullRerun = false) {
+    // Abort any in-flight background analysis and restart fresh
+    autoAnalysisAbortRef.current?.abort();
+    const controller = new AbortController();
+    autoAnalysisAbortRef.current = controller;
+
+    setAutoAnalyzing(true);
+    setSynthesisPending(false);
+
+    // Capture current analysis at call time (avoids stale closure mid-await)
+    const existingAnalysis = analysis;
+    const n = currentSnapshots.length;
+
+    // Incremental: existing analysis covers all but the last snapshot →
+    // only compute the single new transition instead of re-running everything.
+    const isIncremental =
+      !forceFullRerun &&
+      existingAnalysis !== null &&
+      n === existingAnalysis.versions.length + 1;
+
+    const driftLabel = isIncremental
+      ? `V${n - 1} → V${n}`
+      : `${n - 1} transition${n - 1 !== 1 ? "s" : ""}`;
+    openToast(`Computing drift ${driftLabel}…`);
+
+    try {
+      let mergedAnalysis: AnalysisResult;
+
+      if (isIncremental && existingAnalysis) {
+        // ── Phase 1 (incremental): one new transition only ─────────────────
+        const prevSnap = currentSnapshots[n - 2];
+        const newSnap = currentSnapshots[n - 1];
+        const pairVersions: VersionInput[] = [
+          {
+            version: `V${n - 1}`,
+            content: prevSnap.content,
+            timestamp: prevSnap.timestamp,
+            author_name: prevSnap.createdByName,
+            author_role: prevSnap.createdByRole,
+            author_handle: prevSnap.createdByHandle,
+            author_avatar_url: prevSnap.createdByAvatarUrl
+          },
+          {
+            version: `V${n}`,
+            content: newSnap.content,
+            timestamp: newSnap.timestamp,
+            author_name: newSnap.createdByName,
+            author_role: newSnap.createdByRole,
+            author_handle: newSnap.createdByHandle,
+            author_avatar_url: newSnap.createdByAvatarUrl
+          }
+        ];
+        const response = await fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, template, versions: pairVersions }),
+          signal: controller.signal
+        });
+        if (controller.signal.aborted) return;
+        if (!response.ok) return;
+        const partial: AnalysisResult = await response.json();
+
+        // Merge new version entry and drifts into existing analysis
+        const newVersionEntry = partial.versions.find((v) => v.version === `V${n}`);
+        const mergedVersions = newVersionEntry
+          ? [...existingAnalysis.versions, newVersionEntry]
+          : existingAnalysis.versions;
+        // Re-index drift IDs to avoid collisions
+        const mergedDrifts = [...existingAnalysis.drifts, ...partial.drifts].map((d, i) => ({
+          ...d,
+          id: `d${i + 1}`
+        }));
+        const mergedSummaries = [
+          ...(existingAnalysis.transition_summaries ?? []),
+          ...(partial.transition_summaries ?? [])
+        ];
+
+        // Recompute aggregates using the same formula as server-side aggregateNarrative
+        const transitionScores = mergedSummaries.map((t) => {
+          const weight = mergedDrifts
+            .filter((d) => d.from_version === t.from_version && d.to_version === t.to_version)
+            .reduce(
+              (sum, d) => sum + (d.significance === "high" ? 3 : d.significance === "medium" ? 2 : 1),
+              0
+            );
+          return { key: `${t.from_version} -> ${t.to_version}`, weight };
+        });
+        const topTransition = transitionScores.sort((a, b) => b.weight - a.weight)[0];
+        const inflection_point = topTransition?.key ?? existingAnalysis.inflection_point;
+        const highCount = mergedDrifts.filter((d) => d.significance === "high").length;
+        const mediumCount = mergedDrifts.filter((d) => d.significance === "medium").length;
+        const drift_score = Math.min(100, 25 + highCount * 14 + mediumCount * 8 + mergedDrifts.length * 2);
+
+        mergedAnalysis = {
+          ...existingAnalysis,
+          versions: mergedVersions,
+          drifts: mergedDrifts,
+          transition_summaries: mergedSummaries,
+          inflection_point,
+          drift_score,
+          diagnostics: {
+            fallback_used:
+              (existingAnalysis.diagnostics?.fallback_used ?? false) ||
+              (partial.diagnostics?.fallback_used ?? false),
+            transition_model_failures:
+              (existingAnalysis.diagnostics?.transition_model_failures ?? 0) +
+              (partial.diagnostics?.transition_model_failures ?? 0),
+            warnings: [
+              ...(existingAnalysis.diagnostics?.warnings ?? []),
+              ...(partial.diagnostics?.warnings ?? [])
+            ],
+            transition_errors: [
+              ...(existingAnalysis.diagnostics?.transition_errors ?? []),
+              ...(partial.diagnostics?.transition_errors ?? [])
+            ]
+          }
+        };
+      } else {
+        // ── Phase 1 (full): all transitions in parallel ────────────────────
+        const response = await fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, template, versions: mapSnapshotsToVersions(currentSnapshots) }),
+          signal: controller.signal
+        });
+        if (controller.signal.aborted) return;
+        if (!response.ok) return;
+        mergedAnalysis = await response.json();
       }
-    ]);
+
+      setAnalysis(mergedAnalysis);
+      setAutoAnalyzing(false);
+      updateToast("Updating document overview…");
+
+      // ── Phase 2: synthesis on all merged drifts ──────────────────────────
+      setSynthesisPending(true);
+      const synthVersions = currentSnapshots.map((snap, i) => ({
+        version: `V${i + 1}`,
+        author_name: snap.createdByName,
+        author_role: snap.createdByRole
+      }));
+      const synthResponse = await fetch("/api/analyze/synthesis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          template,
+          versions: synthVersions,
+          drifts: mergedAnalysis.drifts
+        }),
+        signal: controller.signal
+      });
+      if (controller.signal.aborted) return;
+      if (synthResponse.ok) {
+        const synthData = await synthResponse.json();
+        setAnalysis((prev) => (prev ? { ...prev, ...synthData } : prev));
+      }
+
+      const doneLabel = isIncremental ? `${driftLabel} analyzed` : "Analysis complete";
+      completeToast(doneLabel);
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") return;
+      // silently swallow auto-analysis errors — don't disrupt editing
+    } finally {
+      if (!controller.signal.aborted) {
+        setAutoAnalyzing(false);
+        setSynthesisPending(false);
+      }
+    }
+  }
+
+  function openToast(message: string) {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToast((prev) => ({ message, done: false, mountKey: prev?.mountKey ?? Date.now() }));
+  }
+
+  function updateToast(message: string) {
+    setToast((prev) => prev ? { ...prev, message } : { message, done: false, mountKey: Date.now() });
+  }
+
+  function completeToast(message: string) {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToast((prev) => ({ message, done: true, mountKey: prev?.mountKey ?? Date.now() }));
+    toastTimerRef.current = setTimeout(() => setToast(null), 2500);
   }
 
   function loadSnapshot(id: string) {
@@ -389,6 +640,10 @@ export default function HomePage() {
             draftPlainText={draftPlainText}
             snapshots={snapshots}
             loading={loading}
+            analyzingMessage={analysisProgress}
+            autoAnalyzing={autoAnalyzing}
+            synthesisPending={synthesisPending}
+            autoAnalyzeEnabled={autoAnalyzeEnabled}
             hasInsights={!!analysis}
             analysis={analysis}
             onTitleChange={setTitle}
@@ -398,23 +653,50 @@ export default function HomePage() {
               setDraftPlainText(plainText);
             }}
             onSaveSnapshot={saveSnapshot}
-            onAnalyze={analyzeSnapshots}
             onLoadSnapshot={loadSnapshot}
             onDeleteSnapshot={deleteSnapshot}
             onInsights={() => setViewMode("insights")}
             onBackToLibrary={goToLibrary}
+            onReanalyze={() => { if (canAnalyze) void autoAnalyze(snapshots, true); }}
+            onToggleAutoAnalyze={() => setAutoAnalyzeEnabled((v) => !v)}
+            onClearAnalysis={() => {
+              autoAnalysisAbortRef.current?.abort();
+              setAnalysis(null);
+              setAutoAnalyzing(false);
+              setSynthesisPending(false);
+            }}
           />
         ) : null}
 
-        {!canAnalyze && viewMode === "editor" && !analysis ? (
-          <p className="px-1 text-sm text-ink/70">
-            Save at least two snapshots with meaningful edits to run analysis.
-          </p>
-        ) : null}
 
         {error ? (
           <div className="rounded-lg bg-red-100 p-3 text-sm text-red-900">
             <p>{error}</p>
+          </div>
+        ) : null}
+
+        {viewMode === "insights" && !analysis ? (
+          <div className="mx-auto max-w-3xl animate-pulse space-y-5 py-6">
+            <div className="space-y-3 py-6">
+              <div className="h-3 w-24 rounded bg-ink/10" />
+              <div className="h-7 w-3/4 rounded-lg bg-ink/10" />
+              <div className="h-7 w-1/2 rounded-lg bg-ink/8" />
+              <div className="flex gap-1 pt-1">
+                {[1,2,3,4].map((d) => (
+                  <span key={d} className="inline-block h-2.5 w-2.5 rounded-full bg-ink/15" />
+                ))}
+              </div>
+            </div>
+            <div className="rounded-3xl bg-ink/5 p-6 space-y-3">
+              {[1,2,3,4,5].map((r) => (
+                <div key={r} className="h-4 rounded bg-ink/8" style={{ width: `${90 - r * 8}%` }} />
+              ))}
+            </div>
+            <div className="rounded-3xl bg-ink/5 p-6 space-y-3">
+              <div className="h-4 w-1/3 rounded bg-ink/8" />
+              <div className="h-4 w-full rounded bg-ink/8" />
+              <div className="h-4 w-4/5 rounded bg-ink/8" />
+            </div>
           </div>
         ) : null}
 
@@ -423,12 +705,37 @@ export default function HomePage() {
             title={title}
             analysis={analysis}
             snapshots={snapshots}
+            synthesisPending={synthesisPending}
             onBack={() => setViewMode("editor")}
             onBackToLibrary={goToLibrary}
             transitionActors={transitionActors}
           />
         ) : null}
       </div>
+
+      {/* ── Live status toast ── */}
+      {toast ? (
+        <div
+          key={toast.mountKey}
+          className={`pointer-events-none fixed bottom-6 left-1/2 z-50 ${
+            toast.done ? "animate-toast-out" : "animate-toast-in"
+          }`}
+          style={{ transform: "translateX(-50%)" }}
+        >
+          <div className="flex items-center gap-2.5 rounded-full bg-ink px-4 py-2.5 shadow-lg">
+            {toast.done ? (
+              <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-olive text-[9px] font-bold text-white">
+                ✓
+              </span>
+            ) : (
+              <svg className="h-4 w-4 shrink-0 animate-spin text-white/60" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="2" strokeDasharray="28" strokeDashoffset="10" strokeLinecap="round" />
+              </svg>
+            )}
+            <span className="text-sm font-semibold text-white">{toast.message}</span>
+          </div>
+        </div>
+      ) : null}
     </main>
   );
 }
