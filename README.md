@@ -26,6 +26,16 @@ Drift is useful for teams working on:
 - investment or strategy memos
 - any document that goes through multiple owners and revisions
 
+## Demo Walkthrough 
+
+<img width="1725" height="1037" alt="home_page" src="https://github.com/user-attachments/assets/57120fcf-ce58-4ea8-9fdd-d747eb5225fc" />
+
+<img width="866" height="520" alt="insightpage_1" src="https://github.com/user-attachments/assets/4aa0e0d3-38dd-44e6-8349-0e6ab1d66b35" />
+
+<img width="1726" height="1038" alt="insight_page2" src="https://github.com/user-attachments/assets/880752b8-ec81-469e-8c93-684cad5d9502" />
+
+<img width="529" height="981" alt="sidebar" src="https://github.com/user-attachments/assets/c540927b-c00d-41b9-bb2b-40c831fd9f7e" />
+
 ## Core Experience
 
 Drift has two modes.
