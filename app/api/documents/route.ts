@@ -5,6 +5,52 @@ import { getDb } from "@/lib/db";
 import { documents } from "@/lib/db/schema";
 import type { DriftDocument, DocumentDigest } from "@/lib/types";
 
+const clerkAuthEnabled = Boolean(
+  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.CLERK_SECRET_KEY
+);
+
+function isRecoverableDbError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message.toLowerCase() : "";
+  return (
+    message.includes("database_url") ||
+    message.includes("failed to fetch") ||
+    message.includes("fetch failed") ||
+    message.includes("connect") ||
+    message.includes("relation") ||
+    message.includes("does not exist")
+  );
+}
+
+function isMissingClerkMiddlewareError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message.toLowerCase() : "";
+  return (
+    message.includes("auth() was called") &&
+    message.includes("clerkmiddleware")
+  );
+}
+
+async function getUserIdOrNull(): Promise<string | null> {
+  if (!clerkAuthEnabled) return null;
+  try {
+    const { userId } = await auth();
+    return userId ?? null;
+  } catch (error) {
+    if (isMissingClerkMiddlewareError(error)) {
+      return null;
+    }
+    throw error;
+  }
+}
+
+function dbDisabledResponse() {
+  return NextResponse.json(
+    {
+      error: "Database is not configured. Set DATABASE_URL to enable server-side document persistence."
+    },
+    { status: 503 }
+  );
+}
+
 function toDigest(row: typeof documents.$inferSelect): DocumentDigest {
   return {
     id: row.id,
@@ -21,8 +67,15 @@ function toDigest(row: typeof documents.$inferSelect): DocumentDigest {
 // GET /api/documents — list all docs for the authenticated user
 export async function GET() {
   try {
-    const { userId } = await auth();
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!process.env.DATABASE_URL) {
+      // Local-only mode: client store will use localStorage fallback.
+      return NextResponse.json([]);
+    }
+    const userId = await getUserIdOrNull();
+    if (!userId) {
+      // Keep local-mode UX clean when auth is disabled/misconfigured.
+      return NextResponse.json([]);
+    }
     const db = getDb();
     const rows = await db
       .select()
@@ -31,6 +84,11 @@ export async function GET() {
       .orderBy(desc(documents.updatedAt));
     return NextResponse.json(rows.map(toDigest));
   } catch (err) {
+    console.error("[api.documents.GET] failed", err);
+    if (isRecoverableDbError(err)) {
+      // Local-only fallback path: keep app usable without DB/migrations.
+      return NextResponse.json([]);
+    }
     const message = err instanceof Error ? err.message : "Failed to list documents";
     return NextResponse.json({ error: message }, { status: 500 });
   }
@@ -39,7 +97,10 @@ export async function GET() {
 // POST /api/documents — create a new document
 export async function POST(request: Request) {
   try {
-    const { userId } = await auth();
+    if (!process.env.DATABASE_URL) {
+      return dbDisabledResponse();
+    }
+    const userId = await getUserIdOrNull();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const body = (await request.json()) as DriftDocument;
     const db = getDb();
@@ -60,6 +121,13 @@ export async function POST(request: Request) {
       .returning();
     return NextResponse.json(row);
   } catch (err) {
+    console.error("[api.documents.POST] failed", err);
+    if (isRecoverableDbError(err)) {
+      return NextResponse.json(
+        { ok: true, persisted: false, warning: "Database unavailable; local-only mode active." },
+        { status: 202 }
+      );
+    }
     const message = err instanceof Error ? err.message : "Failed to create document";
     return NextResponse.json({ error: message }, { status: 500 });
   }

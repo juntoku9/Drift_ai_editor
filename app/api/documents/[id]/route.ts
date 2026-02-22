@@ -5,10 +5,45 @@ import { getDb } from "@/lib/db";
 import { documents } from "@/lib/db/schema";
 import type { DriftDocument } from "@/lib/types";
 
+const clerkAuthEnabled = Boolean(
+  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.CLERK_SECRET_KEY
+);
+
+function isMissingClerkMiddlewareError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message.toLowerCase() : "";
+  return (
+    message.includes("auth() was called") &&
+    message.includes("clerkmiddleware")
+  );
+}
+
+async function getUserIdOrNull(): Promise<string | null> {
+  if (!clerkAuthEnabled) return null;
+  try {
+    const { userId } = await auth();
+    return userId ?? null;
+  } catch (error) {
+    if (isMissingClerkMiddlewareError(error)) {
+      return null;
+    }
+    throw error;
+  }
+}
+
+function dbDisabledResponse() {
+  return NextResponse.json(
+    {
+      error: "Database is not configured. Set DATABASE_URL to enable server-side document persistence."
+    },
+    { status: 503 }
+  );
+}
+
 // HEAD /api/documents/[id] — existence check used by the store upsert logic
 export async function HEAD(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { userId } = await auth();
+    if (!process.env.DATABASE_URL) return new NextResponse(null, { status: 404 });
+    const userId = await getUserIdOrNull();
     if (!userId) return new NextResponse(null, { status: 401 });
     const { id } = await params;
     const db = getDb();
@@ -26,7 +61,8 @@ export async function HEAD(_req: Request, { params }: { params: Promise<{ id: st
 // GET /api/documents/[id]
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { userId } = await auth();
+    if (!process.env.DATABASE_URL) return dbDisabledResponse();
+    const userId = await getUserIdOrNull();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { id } = await params;
     const db = getDb();
@@ -46,7 +82,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 // PUT /api/documents/[id]
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { userId } = await auth();
+    if (!process.env.DATABASE_URL) return dbDisabledResponse();
+    const userId = await getUserIdOrNull();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { id } = await params;
     const body = (await request.json()) as DriftDocument;
@@ -75,7 +112,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 // DELETE /api/documents/[id]
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { userId } = await auth();
+    if (!process.env.DATABASE_URL) return new NextResponse(null, { status: 204 });
+    const userId = await getUserIdOrNull();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { id } = await params;
     const db = getDb();

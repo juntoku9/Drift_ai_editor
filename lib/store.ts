@@ -6,8 +6,24 @@ import { plainTextToHtml } from "@/lib/rich-text";
 const INDEX_KEY = "drift-doc-index";
 const DOC_PREFIX = "drift-doc:";
 const V1_KEY = "drift-editor-state-v1";
+let remotePersistenceAvailable: "unknown" | "enabled" | "disabled" =
+  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? "unknown" : "disabled";
 
 function docKey(id: string) { return `${DOC_PREFIX}${id}`; }
+
+function shouldUseRemotePersistence(): boolean {
+  return remotePersistenceAvailable !== "disabled";
+}
+
+function markRemotePersistenceFromStatus(status: number): void {
+  if (status === 401 || status === 403) {
+    remotePersistenceAvailable = "disabled";
+    return;
+  }
+  if (status >= 200 && status < 300) {
+    remotePersistenceAvailable = "enabled";
+  }
+}
 
 function toDigest(doc: DriftDocument): DocumentDigest {
   return {
@@ -72,16 +88,20 @@ export function createDocument(partial?: Partial<DriftDocument>): DriftDocument 
 // ── Async API-backed store (falls back to localStorage on any error / 401) ────
 
 export async function listDocuments(): Promise<DocumentDigest[]> {
+  if (!shouldUseRemotePersistence()) return localList();
   try {
     const res = await fetch("/api/documents");
+    markRemotePersistenceFromStatus(res.status);
     if (!res.ok) return localList();
     return res.json() as Promise<DocumentDigest[]>;
   } catch { return localList(); }
 }
 
 export async function loadDocument(id: string): Promise<DriftDocument | null> {
+  if (!shouldUseRemotePersistence()) return localLoad(id);
   try {
     const res = await fetch(`/api/documents/${id}`);
+    markRemotePersistenceFromStatus(res.status);
     if (!res.ok) return localLoad(id);
     return res.json() as Promise<DriftDocument>;
   } catch { return localLoad(id); }
@@ -90,9 +110,12 @@ export async function loadDocument(id: string): Promise<DriftDocument | null> {
 export async function saveDocument(doc: DriftDocument): Promise<void> {
   // Always write to localStorage immediately (instant, no flicker on reload)
   localSave(doc);
+  if (!shouldUseRemotePersistence()) return;
   // Then persist to DB (best-effort — unauthenticated users just stay on localStorage)
   try {
     const exists = await fetch(`/api/documents/${doc.id}`, { method: "HEAD" });
+    markRemotePersistenceFromStatus(exists.status);
+    if (exists.status === 401 || exists.status === 403) return;
     if (exists.status === 404) {
       await fetch("/api/documents", {
         method: "POST",
@@ -112,8 +135,10 @@ export async function saveDocument(doc: DriftDocument): Promise<void> {
 
 export async function deleteDocument(id: string): Promise<void> {
   localDelete(id);
+  if (!shouldUseRemotePersistence()) return;
   try {
-    await fetch(`/api/documents/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/documents/${id}`, { method: "DELETE" });
+    markRemotePersistenceFromStatus(res.status);
   } catch { /* best-effort */ }
 }
 
