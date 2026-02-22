@@ -1,6 +1,6 @@
-# Drift - A document editor that tracks semantic diffs across edits 
+# Drift - AI semantic diff for high-stakes documents
 
-**See how meaning moves through your documents.**
+**AI document manager that oversees how business plans, product PRDs, and projects evolve over time, and who contributes to those changes.**
 
 Most collaboration tools track what changed. Drift tracks *what it means* — surfacing the moment a launch plan became tentative, a contract shifted liability, or a product goal was quietly reframed.
 

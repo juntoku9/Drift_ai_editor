@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
-  title: "Drift - See How Meaning Moves",
-  description: "Semantic diff for collaborative documents."
+  title: "Drift - AI Semantic Diff for Documents",
+  description: "AI document manager that tracks how business plans, product PRDs, and projects evolve over time and who drives those changes."
 };
 
 export default function RootLayout({

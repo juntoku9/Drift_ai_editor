@@ -592,7 +592,7 @@ export default function HomePage() {
           <div>
             <h1 className="font-[var(--font-serif)] text-5xl leading-none md:text-6xl">Drift</h1>
             <p className="mt-2 max-w-md text-base text-ink/60">
-              Track how meaning, intent, and commitments change across every version of your document.
+              See how business plans, PRDs, and project docs evolve over time and who changed what.
             </p>
           </div>
         </header>
@@ -671,7 +671,7 @@ export default function HomePage() {
         <div>
           <h1 className="font-[var(--font-serif)] text-5xl leading-none md:text-6xl">Drift</h1>
           <p className="mt-2 max-w-md text-base text-ink/60">
-            Track how meaning, intent, and commitments change across every version of your document.
+            See how business plans, PRDs, and project docs evolve over time and who changed what.
           </p>
         </div>
         <div className="flex items-center gap-2 pt-1">
