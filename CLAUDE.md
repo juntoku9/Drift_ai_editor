@@ -79,9 +79,7 @@ saveDocument(doc)
 
 ## Auth model
 
-Clerk is **optional**. `app/layout.tsx` only wraps with `<ClerkProvider>` when `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is set. When absent, the app runs fully unauthenticated and all data stays in localStorage.
-
-`components/clerk-user-sync.tsx` is loaded with `dynamic(..., { ssr: false })` — this is intentional. `useUser()` can only run inside ClerkProvider and only client-side. Do not move this call into a server component or remove the `ssr: false`.
+Auth is currently disabled for demo collaboration mode. All users work in a shared document workspace and provide identity context (name/role) at snapshot save time.
 
 ---
 
@@ -89,8 +87,6 @@ Clerk is **optional**. `app/layout.tsx` only wraps with `<ClerkProvider>` when `
 
 ```bash
 ANTHROPIC_API_KEY=            # Required for analysis
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=  # Optional — enables auth
-CLERK_SECRET_KEY=             # Optional — required if above is set
 DATABASE_URL=                 # Optional — Neon Postgres for cross-device sync
 ANTHROPIC_MODEL=              # Optional — defaults to claude-sonnet-4-6
 ALLOW_MOCK_ANALYSIS=true      # Dev only — skips Claude, returns fake data

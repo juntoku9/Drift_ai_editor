@@ -1,34 +1,8 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import { documents } from "@/lib/db/schema";
 import type { DriftDocument } from "@/lib/types";
-
-const clerkAuthEnabled = Boolean(
-  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.CLERK_SECRET_KEY
-);
-
-function isMissingClerkMiddlewareError(error: unknown): boolean {
-  const message = error instanceof Error ? error.message.toLowerCase() : "";
-  return (
-    message.includes("auth() was called") &&
-    message.includes("clerkmiddleware")
-  );
-}
-
-async function getUserIdOrNull(): Promise<string | null> {
-  if (!clerkAuthEnabled) return null;
-  try {
-    const { userId } = await auth();
-    return userId ?? null;
-  } catch (error) {
-    if (isMissingClerkMiddlewareError(error)) {
-      return null;
-    }
-    throw error;
-  }
-}
 
 function dbDisabledResponse() {
   return NextResponse.json(
@@ -43,14 +17,12 @@ function dbDisabledResponse() {
 export async function HEAD(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     if (!process.env.DATABASE_URL) return new NextResponse(null, { status: 404 });
-    const userId = await getUserIdOrNull();
-    if (!userId) return new NextResponse(null, { status: 401 });
     const { id } = await params;
     const db = getDb();
     const [row] = await db
       .select({ id: documents.id })
       .from(documents)
-      .where(and(eq(documents.id, id), eq(documents.userId, userId)))
+      .where(eq(documents.id, id))
       .limit(1);
     return new NextResponse(null, { status: row ? 200 : 404 });
   } catch {
@@ -62,14 +34,12 @@ export async function HEAD(_req: Request, { params }: { params: Promise<{ id: st
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     if (!process.env.DATABASE_URL) return dbDisabledResponse();
-    const userId = await getUserIdOrNull();
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { id } = await params;
     const db = getDb();
     const [row] = await db
       .select()
       .from(documents)
-      .where(and(eq(documents.id, id), eq(documents.userId, userId)))
+      .where(eq(documents.id, id))
       .limit(1);
     if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(row);
@@ -83,8 +53,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     if (!process.env.DATABASE_URL) return dbDisabledResponse();
-    const userId = await getUserIdOrNull();
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { id } = await params;
     const body = (await request.json()) as DriftDocument;
     const db = getDb();
@@ -99,7 +67,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         analysis: body.analysis,
         updatedAt: new Date().toISOString(),
       })
-      .where(and(eq(documents.id, id), eq(documents.userId, userId)))
+      .where(eq(documents.id, id))
       .returning();
     if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(row);
@@ -113,13 +81,11 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     if (!process.env.DATABASE_URL) return new NextResponse(null, { status: 204 });
-    const userId = await getUserIdOrNull();
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { id } = await params;
     const db = getDb();
     await db
       .delete(documents)
-      .where(and(eq(documents.id, id), eq(documents.userId, userId)));
+      .where(eq(documents.id, id));
     return new NextResponse(null, { status: 204 });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Failed to delete document";

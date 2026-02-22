@@ -1,13 +1,6 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-
-const ClerkUserSync = dynamic(
-  () => import("@/components/clerk-user-sync").then((m) => m.ClerkUserSync),
-  { ssr: false }
-);
 
 import { AnalysisView } from "@/components/analysis-view";
 import { DocumentList } from "@/components/document-list";
@@ -31,10 +24,7 @@ import type {
 } from "@/lib/types";
 
 export default function HomePage() {
-  const authEnabled = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
-  const [currentUser, setCurrentUser] = useState<{
-    id?: string; name?: string; avatarUrl?: string; handle?: string;
-  } | null>(null);
+  const authorProfileKey = "drift-demo-author-profile-v1";
 
   // Top-level navigation: null = library, string = open document
   const [activeDocId, setActiveDocId] = useState<string | null>(null);
@@ -59,6 +49,9 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const [analysisProgress, setAnalysisProgress] = useState<string | null>(null);
   const [demoCatalog, setDemoCatalog] = useState<Array<{ id: string; name: string }>>([]);
+  const [authorModalOpen, setAuthorModalOpen] = useState(false);
+  const [authorName, setAuthorName] = useState("");
+  const [authorRole, setAuthorRole] = useState("");
 
   const canAnalyze = useMemo(() => snapshots.length >= 2, [snapshots]);
 
@@ -94,6 +87,18 @@ export default function HomePage() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    try {
+      const savedRaw = localStorage.getItem(authorProfileKey);
+      if (!savedRaw) return;
+      const saved = JSON.parse(savedRaw) as { name?: string; role?: string };
+      setAuthorName(saved.name?.trim() ?? "");
+      setAuthorRole(saved.role?.trim() ?? "");
+    } catch {
+      // Ignore invalid saved profile.
+    }
+  }, [authorProfileKey]);
 
   // Open a document by id
   const openDocument = useCallback((id: string) => {
@@ -332,6 +337,22 @@ export default function HomePage() {
       setError("Snapshot must have at least 20 characters.");
       return;
     }
+    setAuthorModalOpen(true);
+    setError(null);
+  }
+
+  function confirmSaveSnapshot() {
+    const name = authorName.trim();
+    const role = authorRole.trim();
+    if (!name || !role) {
+      setError("Name and role are required to save a snapshot.");
+      return;
+    }
+    if (draftPlainText.trim().length < 20) {
+      setError("Snapshot must have at least 20 characters.");
+      return;
+    }
+    localStorage.setItem(authorProfileKey, JSON.stringify({ name, role }));
     setError(null);
     const newSnapshot: EditorSnapshot = {
       id: crypto.randomUUID(),
@@ -340,14 +361,13 @@ export default function HomePage() {
       content: draftPlainText.trim(),
       richContent: draftHtml,
       source: "manual",
-      createdById: currentUser?.id,
-      createdByName: currentUser?.name ?? "Unknown",
-      createdByRole: "Editor",
-      createdByHandle: currentUser?.handle,
-      createdByAvatarUrl: currentUser?.avatarUrl
+      createdById: name.toLowerCase().replace(/\s+/g, "-"),
+      createdByName: name,
+      createdByRole: role
     };
     const newSnapshots = [...snapshots, newSnapshot];
     setSnapshots(newSnapshots);
+    setAuthorModalOpen(false);
     if (newSnapshots.length >= 2 && autoAnalyzeEnabled) {
       void autoAnalyze(newSnapshots);
     }
@@ -568,29 +588,12 @@ export default function HomePage() {
   if (activeDocId === null) {
     return (
       <main className="mx-auto max-w-[1600px] px-4 py-6 md:px-8 md:py-10">
-        {authEnabled ? <ClerkUserSync onUser={setCurrentUser} /> : null}
         <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="font-[var(--font-serif)] text-5xl leading-none md:text-6xl">Drift</h1>
             <p className="mt-2 max-w-md text-base text-ink/60">
               Track how meaning, intent, and commitments change across every version of your document.
             </p>
-          </div>
-          <div className="flex items-center gap-2 pt-1">
-            {authEnabled ? (
-              <>
-                <SignedIn>
-                  <UserButton />
-                </SignedIn>
-                <SignedOut>
-                  <SignInButton mode="modal">
-                    <button className="rounded-full border border-ink/20 bg-white px-4 py-2 text-sm font-semibold hover:bg-ink/5">
-                      Sign in
-                    </button>
-                  </SignInButton>
-                </SignedOut>
-              </>
-            ) : null}
           </div>
         </header>
 
@@ -613,6 +616,50 @@ export default function HomePage() {
         {loading ? (
           <div className="mt-4 text-center text-sm text-ink/60">Loading demo...</div>
         ) : null}
+        {authorModalOpen ? (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 px-4">
+            <div className="w-full max-w-xl rounded-3xl border border-ink/10 bg-white p-6 shadow-2xl">
+              <h2 className="font-[var(--font-serif)] text-3xl text-ink">Snapshot Identity</h2>
+              <p className="mt-2 text-sm text-ink/60">Who is making this document change?</p>
+              <div className="mt-5 grid gap-3">
+                <label className="grid gap-1.5">
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate">Name</span>
+                  <input
+                    value={authorName}
+                    onChange={(event) => setAuthorName(event.target.value)}
+                    className="rounded-xl border border-ink/15 bg-white px-3 py-2 text-sm text-ink outline-none focus:border-ink/35"
+                    placeholder="Perseus"
+                  />
+                </label>
+                <label className="grid gap-1.5">
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate">Role</span>
+                  <input
+                    value={authorRole}
+                    onChange={(event) => setAuthorRole(event.target.value)}
+                    className="rounded-xl border border-ink/15 bg-white px-3 py-2 text-sm text-ink outline-none focus:border-ink/35"
+                    placeholder="Product Manager"
+                  />
+                </label>
+              </div>
+              <div className="mt-6 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setAuthorModalOpen(false)}
+                  className="rounded-full border border-ink/20 bg-white px-4 py-2 text-sm font-semibold hover:bg-ink/5"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmSaveSnapshot}
+                  className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-white hover:bg-ink/90"
+                >
+                  Save Snapshot
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </main>
     );
   }
@@ -620,7 +667,6 @@ export default function HomePage() {
   // Document view
   return (
     <main className="mx-auto max-w-[1600px] px-4 py-6 md:px-8 md:py-10">
-      {authEnabled ? <ClerkUserSync onUser={setCurrentUser} /> : null}
       <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="font-[var(--font-serif)] text-5xl leading-none md:text-6xl">Drift</h1>
@@ -636,20 +682,6 @@ export default function HomePage() {
           >
             &larr; Library
           </button>
-          {authEnabled ? (
-            <>
-              <SignedIn>
-                <UserButton />
-              </SignedIn>
-              <SignedOut>
-                <SignInButton mode="modal">
-                  <button className="rounded-full border border-ink/20 bg-white px-4 py-2 text-sm font-semibold hover:bg-ink/5">
-                    Sign in
-                  </button>
-                </SignInButton>
-              </SignedOut>
-            </>
-          ) : null}
         </div>
       </header>
 
@@ -755,6 +787,50 @@ export default function HomePage() {
               </svg>
             )}
             <span className="text-sm font-semibold text-white">{toast.message}</span>
+          </div>
+        </div>
+      ) : null}
+      {authorModalOpen ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 px-4">
+          <div className="w-full max-w-xl rounded-3xl border border-ink/10 bg-white p-6 shadow-2xl">
+            <h2 className="font-[var(--font-serif)] text-3xl text-ink">Snapshot Identity</h2>
+            <p className="mt-2 text-sm text-ink/60">Who is making this document change?</p>
+            <div className="mt-5 grid gap-3">
+              <label className="grid gap-1.5">
+                <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate">Name</span>
+                <input
+                  value={authorName}
+                  onChange={(event) => setAuthorName(event.target.value)}
+                  className="rounded-xl border border-ink/15 bg-white px-3 py-2 text-sm text-ink outline-none focus:border-ink/35"
+                  placeholder="Perseus"
+                />
+              </label>
+              <label className="grid gap-1.5">
+                <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate">Role</span>
+                <input
+                  value={authorRole}
+                  onChange={(event) => setAuthorRole(event.target.value)}
+                  className="rounded-xl border border-ink/15 bg-white px-3 py-2 text-sm text-ink outline-none focus:border-ink/35"
+                  placeholder="Product Manager"
+                />
+              </label>
+            </div>
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setAuthorModalOpen(false)}
+                className="rounded-full border border-ink/20 bg-white px-4 py-2 text-sm font-semibold hover:bg-ink/5"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmSaveSnapshot}
+                className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-white hover:bg-ink/90"
+              >
+                Save Snapshot
+              </button>
+            </div>
           </div>
         </div>
       ) : null}

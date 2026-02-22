@@ -99,8 +99,6 @@ Current primary UI does not expose Google import controls. Product focus is edit
 
 Required:
 - `ANTHROPIC_API_KEY`
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
-- `CLERK_SECRET_KEY`
 
 Recommended:
 - `ANTHROPIC_MODEL=claude-sonnet-4-6`

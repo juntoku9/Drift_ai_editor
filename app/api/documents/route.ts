@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
-import { eq, desc } from "drizzle-orm";
+import { desc } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import { documents } from "@/lib/db/schema";
 import type { DriftDocument, DocumentDigest } from "@/lib/types";
 
-const clerkAuthEnabled = Boolean(
-  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.CLERK_SECRET_KEY
-);
+const DEMO_WORKSPACE_ID = "demo-workspace";
 
 function isRecoverableDbError(error: unknown): boolean {
   const message = error instanceof Error ? error.message.toLowerCase() : "";
@@ -19,27 +16,6 @@ function isRecoverableDbError(error: unknown): boolean {
     message.includes("relation") ||
     message.includes("does not exist")
   );
-}
-
-function isMissingClerkMiddlewareError(error: unknown): boolean {
-  const message = error instanceof Error ? error.message.toLowerCase() : "";
-  return (
-    message.includes("auth() was called") &&
-    message.includes("clerkmiddleware")
-  );
-}
-
-async function getUserIdOrNull(): Promise<string | null> {
-  if (!clerkAuthEnabled) return null;
-  try {
-    const { userId } = await auth();
-    return userId ?? null;
-  } catch (error) {
-    if (isMissingClerkMiddlewareError(error)) {
-      return null;
-    }
-    throw error;
-  }
 }
 
 function dbDisabledResponse() {
@@ -64,29 +40,21 @@ function toDigest(row: typeof documents.$inferSelect): DocumentDigest {
   };
 }
 
-// GET /api/documents — list all docs for the authenticated user
+// GET /api/documents — list all shared demo docs
 export async function GET() {
   try {
     if (!process.env.DATABASE_URL) {
-      // Local-only mode: client store will use localStorage fallback.
-      return NextResponse.json([]);
-    }
-    const userId = await getUserIdOrNull();
-    if (!userId) {
-      // Keep local-mode UX clean when auth is disabled/misconfigured.
       return NextResponse.json([]);
     }
     const db = getDb();
     const rows = await db
       .select()
       .from(documents)
-      .where(eq(documents.userId, userId))
       .orderBy(desc(documents.updatedAt));
     return NextResponse.json(rows.map(toDigest));
   } catch (err) {
     console.error("[api.documents.GET] failed", err);
     if (isRecoverableDbError(err)) {
-      // Local-only fallback path: keep app usable without DB/migrations.
       return NextResponse.json([]);
     }
     const message = err instanceof Error ? err.message : "Failed to list documents";
@@ -94,21 +62,19 @@ export async function GET() {
   }
 }
 
-// POST /api/documents — create a new document
+// POST /api/documents — create a new shared demo document
 export async function POST(request: Request) {
   try {
     if (!process.env.DATABASE_URL) {
       return dbDisabledResponse();
     }
-    const userId = await getUserIdOrNull();
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const body = (await request.json()) as DriftDocument;
     const db = getDb();
     const [row] = await db
       .insert(documents)
       .values({
         id: body.id,
-        userId,
+        userId: DEMO_WORKSPACE_ID,
         title: body.title,
         template: body.template,
         draftHtml: body.draftHtml,

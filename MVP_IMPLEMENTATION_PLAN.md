@@ -102,8 +102,6 @@ API behavior:
 Run locally:
 1. `npm install`
 2. set `.env.local` with:
-   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
-   - `CLERK_SECRET_KEY`
    - `ANTHROPIC_API_KEY`
    - `ANTHROPIC_MODEL=claude-sonnet-4-6`
 3. `npm run dev`

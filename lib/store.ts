@@ -7,7 +7,7 @@ const INDEX_KEY = "drift-doc-index";
 const DOC_PREFIX = "drift-doc:";
 const V1_KEY = "drift-editor-state-v1";
 let remotePersistenceAvailable: "unknown" | "enabled" | "disabled" =
-  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? "unknown" : "disabled";
+  "unknown";
 
 function docKey(id: string) { return `${DOC_PREFIX}${id}`; }
 
