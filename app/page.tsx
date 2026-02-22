@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/nextjs";
 
 import { AnalysisView } from "@/components/analysis-view";
 import { DocumentList } from "@/components/document-list";
@@ -26,6 +26,7 @@ import type {
 
 export default function HomePage() {
   const authEnabled = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+  const { user } = useUser();
 
   // Top-level navigation: null = library, string = open document
   const [activeDocId, setActiveDocId] = useState<string | null>(null);
@@ -327,11 +328,12 @@ export default function HomePage() {
       content: draftPlainText.trim(),
       richContent: draftHtml,
       source: "manual",
-      createdById: undefined,
-      createdByName: "Unknown",
+      createdById: user?.id,
+      createdByName:
+        user?.fullName ?? user?.username ?? user?.primaryEmailAddress?.emailAddress ?? "Unknown",
       createdByRole: "Editor",
-      createdByHandle: undefined,
-      createdByAvatarUrl: undefined
+      createdByHandle: user?.username ? `@${user.username}` : undefined,
+      createdByAvatarUrl: user?.imageUrl
     };
     const newSnapshots = [...snapshots, newSnapshot];
     setSnapshots(newSnapshots);
