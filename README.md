@@ -1,4 +1,4 @@
-# Drift - AI semantic diff for high-stakes documents
+# Drift - Understand decision drift across every document revision
 
 **AI document manager that oversees how business plans, product PRDs, and projects evolve over time, and who contributes to those changes.**
 
