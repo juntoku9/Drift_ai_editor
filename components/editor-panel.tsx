@@ -244,6 +244,19 @@ export function EditorPanel({
   // Diff state: which snapshot to compare against current draft
   const [diffSnap, setDiffSnap] = useState<{ snapshot: EditorSnapshot; index: number } | null>(null);
 
+  /* Unique contributors from snapshots (deduplicated by name) */
+  const contributors = useMemo(() => {
+    const seen = new Set<string>();
+    const list: { name: string; role?: string; avatarUrl?: string }[] = [];
+    for (const snap of snapshots) {
+      const name = snap.createdByName ?? "Unknown";
+      if (seen.has(name)) continue;
+      seen.add(name);
+      list.push({ name, role: snap.createdByRole, avatarUrl: snap.createdByAvatarUrl });
+    }
+    return list;
+  }, [snapshots]);
+
 
   /* Per-version drift chips from analysis */
   const versionDrifts = snapshots.map((_, i) => {
@@ -291,7 +304,41 @@ export function EditorPanel({
             placeholder="Untitled Document"
           />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          {/* Contributor avatars — like Google Docs collaborator row */}
+          {contributors.length > 0 && (
+            <div className="flex items-center">
+              {contributors.slice(0, 5).map((c, i) => (
+                <div
+                  key={c.name}
+                  title={c.role ? `${c.name} · ${c.role}` : c.name}
+                  className="relative"
+                  style={{ marginLeft: i === 0 ? 0 : "-8px", zIndex: contributors.length - i }}
+                >
+                  {c.avatarUrl ? (
+                    <img
+                      src={c.avatarUrl}
+                      alt={c.name}
+                      className="h-8 w-8 rounded-full border-2 border-white object-cover shadow-sm"
+                    />
+                  ) : (
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-ink/15 text-xs font-bold text-ink/60 shadow-sm">
+                      {c.name[0]}
+                    </span>
+                  )}
+                </div>
+              ))}
+              {contributors.length > 5 && (
+                <span
+                  className="relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-ink/10 text-[11px] font-bold text-ink/50 shadow-sm"
+                  style={{ marginLeft: "-8px" }}
+                >
+                  +{contributors.length - 5}
+                </span>
+              )}
+            </div>
+          )}
+
           {onInsights ? (
             <div className="inline-flex items-center rounded-full border border-ink/20 bg-white p-1">
               <span className="rounded-full bg-ink px-4 py-1.5 text-sm font-semibold text-white">
