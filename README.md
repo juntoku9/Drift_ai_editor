@@ -1,4 +1,4 @@
-# Drift
+# Drift - A document editor that tracks semantic diffs across edits 
 
 **See how meaning moves through your documents.**
 
